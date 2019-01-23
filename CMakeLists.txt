@@ -8,4 +8,4 @@ project(tira-puristin)
 include_directories(./src)
 
 # Targets
-add_executable(puristin ./src/main.cpp)
+add_executable(puristin ./src/main.cpp ./src/file_analyzer.cpp)
