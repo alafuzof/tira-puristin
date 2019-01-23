@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     std::ifstream input_file(argv[2], std::ifstream::binary);
     FileAnalyzer fa;
     fa.analyze(input_file);
+    fa.print_report();
   }
 
   //std::cout << "Hello World!" << std::endl;
