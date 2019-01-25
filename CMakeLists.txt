@@ -18,11 +18,13 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build .
 add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
         ${CMAKE_BINARY_DIR}/googletest-build)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
+
 # Include (headers)
 include_directories(./src)
 
-# Targets
-add_executable(puristin ./src/main.cpp ./src/file_analyzer.cpp)
-
+# Add testing
 enable_testing()
 add_subdirectory(test)
+
+add_subdirectory(src)
