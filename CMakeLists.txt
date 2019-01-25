@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 3.5)
 # Project name
 project(tira-puristin)
 
+# Version number
+set(VERSION_MAJOR 0 CACHE STRING "Project major version number.")
+set(VERSION_MINOR 2 CACHE STRING "Project minor version number.")
+
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in
         googletest-download/CMakeLists.txt)
@@ -18,13 +22,33 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build .
 add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
         ${CMAKE_BINARY_DIR}/googletest-build)
 
+# Move binaries to the build root directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
 # Include (headers)
 include_directories(./src)
 
-# Add testing
+# Build testing
 enable_testing()
 add_subdirectory(test)
 
+# Build main program
 add_subdirectory(src)
+
+# Build Doxygen documentation
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
+  set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+  configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+  message("Doxygen build started")
+
+  add_custom_target(doc_doxygen ALL
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM)
+else()
+  message("Doxygen needs to be installed to generate the doxygen documentation")
+endif()
