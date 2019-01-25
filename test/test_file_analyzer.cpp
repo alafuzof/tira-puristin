@@ -23,42 +23,30 @@ TEST_F(FileAnalyzerTest, EntropyStartsAsZero) {
 }
 
 TEST_F(FileAnalyzerTest, LengthReflectsAnalyzedData) {
-  std::string s = "abcd";
-  std::istringstream iss(s);
-  fa->analyze(iss);
+  fa->analyze("abcd");
   EXPECT_EQ(fa->length(), 4);
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfRepeatedSymbolIsZero) {
-  std::string s = "aaaa";
-  std::istringstream iss(s);
-  fa->analyze(iss);
+  fa->analyze("aaaa");
   EXPECT_EQ(fa->entropy(), 0.0);
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfTwoEquallyLikelySymbolsIsOne) {
-  std::string s = "abab";
-  std::istringstream iss(s);
-  fa->analyze(iss);
+  fa->analyze("abab");
   EXPECT_EQ(fa->entropy(), 1.0);
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfFourEquallyLikelySymbolsIsTwo) {
-  std::string s = "abcd";
-  std::istringstream iss(s);
-  fa->analyze(iss);
+  fa->analyze("abcd");
   EXPECT_EQ(fa->entropy(), 2.0);
 }
 
 TEST_F(FileAnalyzerTest, EntropyIsOrderInvariant) {
-  std::string s1 = "abab";
-  std::istringstream iss1(s1);
-  fa->analyze(iss1);
+  fa->analyze("abab");
   float ent1 = fa->entropy();
 
-  std::string s2 = "baba";
-  std::istringstream iss2(s2);
-  fa->analyze(iss2);
+  fa->analyze("baba");
   float ent2 = fa->entropy();
 
   EXPECT_EQ(ent1, ent2);
