@@ -37,7 +37,9 @@ void FileAnalyzer::print_report() {
 
   std::cout << "Byte counts:" << std::endl;
   for(int i=0; i<256; i++) {
-    std::cout << i << " - " << this->m_byte_counts[i] << std::endl;
+    if(m_byte_counts[i] != 0) {
+      std::cout << i << " - " << this->m_byte_counts[i] << std::endl;
+    }
   }
 }
 
