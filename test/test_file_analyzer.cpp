@@ -15,31 +15,31 @@ public:
 };
 
 TEST_F(FileAnalyzerTest, LengthStartsAsZero) {
-  EXPECT_EQ(fa->length(), 0);
+  EXPECT_EQ(0, fa->length());
 }
 
 TEST_F(FileAnalyzerTest, EntropyStartsAsZero) {
-  EXPECT_EQ(fa->entropy(), 0.0);
+  EXPECT_EQ(0.0, fa->entropy());
 }
 
 TEST_F(FileAnalyzerTest, LengthReflectsAnalyzedData) {
   fa->analyze("abcd");
-  EXPECT_EQ(fa->length(), 4);
+  EXPECT_EQ(4, fa->length());
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfRepeatedSymbolIsZero) {
   fa->analyze("aaaa");
-  EXPECT_EQ(fa->entropy(), 0.0);
+  EXPECT_EQ(0.0, fa->entropy());
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfTwoEquallyLikelySymbolsIsOne) {
   fa->analyze("abab");
-  EXPECT_EQ(fa->entropy(), 1.0);
+  EXPECT_EQ(1.0, fa->entropy());
 }
 
 TEST_F(FileAnalyzerTest, EntropyOfFourEquallyLikelySymbolsIsTwo) {
   fa->analyze("abcd");
-  EXPECT_EQ(fa->entropy(), 2.0);
+  EXPECT_EQ(2.0, fa->entropy());
 }
 
 TEST_F(FileAnalyzerTest, EntropyIsOrderInvariant) {
