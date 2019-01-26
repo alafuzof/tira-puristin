@@ -1,11 +1,15 @@
 #include <cmath>
+#include <iomanip>
 #include <sstream>
 #include "file_analyzer.h"
+#include "priority_queue.h"
+
+// Currently the code equates symbol with 8-bit char
+// TODO: wide char support?
+#define NUM_SYMBOLS 256
 
 FileAnalyzer::FileAnalyzer() {
-  // Currently the code equates symbol with 8-bit char
-  // TODO: wide char support?
-  this->m_symbol_count = new unsigned int[256]();
+  this->m_symbol_count = new unsigned int[NUM_SYMBOLS]();
   this->m_length = 0;
 }
 
@@ -15,7 +19,7 @@ FileAnalyzer::~FileAnalyzer() {
 
 void FileAnalyzer::analyze(std::istream &input) {
   // First reset the collected stats
-  for(int i=0; i<256; i++) {
+  for(int i=0; i<NUM_SYMBOLS; i++) {
     this->m_symbol_count[i] = 0;
   }
   this->m_length = 0;
@@ -49,11 +53,24 @@ void FileAnalyzer::print_report() {
             << ent*this->m_length << " bits\n"
             << ent*this->m_length/8 << " bytes\n" << std::endl;
 
-  std::cout << "Byte counts:" << std::endl;
-  for(int i=0; i<256; i++) {
-    if(m_symbol_count[i] != 0) { // Only show occurrence for symbols seen
-      std::cout << i << " - " << this->m_symbol_count[i] << std::endl;
-    }
+  // Sort the symbols by their occurrence/probability
+  float *prob = probabilities();
+  PriorityQueue<char> pq(NUM_SYMBOLS, MAX_PRIORITY);
+  for(int i=0; i<NUM_SYMBOLS; i++) {
+    if(prob[i] > 0.0)
+      pq.push((char)i, prob[i]);
+  }
+  delete[] prob;
+
+  // Print the most common symbols
+  std::cout << "Top 10 symbols:" << std::endl;
+  std::cout << "Ord\tVal\tChar\tCount" << std::endl;
+  for(int i=0; i<10; i++) {
+    Element<char> el = pq.pop();
+    if(el.value < 33 || el.value > 126)
+      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t \t" << this->m_symbol_count[el.value] << std::endl;
+    else
+      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t " << el.value << "\t" << this->m_symbol_count[el.value] << std::endl;
   }
 }
 
@@ -62,12 +79,20 @@ unsigned int FileAnalyzer::length() {
 }
 
 float FileAnalyzer::entropy() {
-
+  float *prob = probabilities();
   float res = 0.0;
-  for(int i=0; i<256; i++) {
-    float p = (float)this->m_symbol_count[i] / this->m_length;
-    if(p > 0) // By convention 0*log(0) = 0
-      res -= p * std::log2(p);
+  for(int i=0; i<NUM_SYMBOLS; i++) {
+    if(prob[i] > 0) // By convention 0*log(0) = 0
+      res -= prob[i] * std::log2(prob[i]);
   }
+  delete[] prob;
   return res;
+}
+
+float *FileAnalyzer::probabilities() {
+  float *prob = new float[NUM_SYMBOLS];
+  for(int i=0; i<NUM_SYMBOLS; i++) {
+    prob[i] = (float)m_symbol_count[i] / m_length;
+  }
+  return prob;
 }

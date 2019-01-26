@@ -17,12 +17,15 @@ public:
   /// \param input String of text to analyze
   void analyze(const std::string &input);
 
-  /// Returns the number of symbols in the most recent input
+  /// Gets the number of symbols in the most recent input
   /// \return the number of analyzed symbols (or 0 before first analysis)
   unsigned int length();
-  /// Returns the entropy per symbol in the most recent input
+  /// Calculates the entropy per symbol in the most recent input
   /// \return the number of entropy bits per symbol (or 0 before the first analysis)
   float entropy();
+  /// Gets the symbol probabilities for the most recent input
+  /// \return the probability of each symbol (including unseen symbols)
+  float *probabilities();
 
   /// Prints a summary of the analysis results on the previous input
   void print_report();
