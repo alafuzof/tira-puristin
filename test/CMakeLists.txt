@@ -2,7 +2,8 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 set(TEST_SRC
   test.cpp
-  test_file_analyzer.cpp)
+  test_file_analyzer.cpp
+  test_priority_queue.cpp)
 
 add_executable(puristin_test ${TEST_SRC})
 target_link_libraries(puristin_test gtest gmock_main)
