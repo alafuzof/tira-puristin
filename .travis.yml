@@ -8,4 +8,4 @@ before_script:
 
 script:
   - make
-  - puristin_test
+  - ./puristin_test
