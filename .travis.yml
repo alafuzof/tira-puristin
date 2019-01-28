@@ -1,0 +1,9 @@
+language: cpp
+
+dist: xenial
+
+before_script:
+  - cd build
+  - cmake ..
+
+script: make && make test
