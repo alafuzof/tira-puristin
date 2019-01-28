@@ -24,12 +24,19 @@ void FileAnalyzer::analyze(std::istream &input) {
   }
   this->m_length = 0;
 
+  // Save current stream position
+  std::streampos pos = input.tellg();
+
   // Iterate through the input and count character occurrence
   char c;
   while(input.get(c)) {
     this->m_symbol_count[(unsigned char)c]++;
     this->m_length++;
   }
+
+  // Restore stream position
+  input.clear(); // Clear to reset the fail bit from the final get() above
+  input.seekg(pos);
 }
 
 void FileAnalyzer::analyze(const std::string &input) {
@@ -95,4 +102,12 @@ float *FileAnalyzer::probabilities() {
     prob[i] = (float)m_symbol_count[i] / m_length;
   }
   return prob;
+}
+
+unsigned int *FileAnalyzer::frequencies() {
+  unsigned int *freq = new unsigned int[NUM_SYMBOLS];
+  for(int i=0; i<NUM_SYMBOLS; i++) {
+    freq[i] = m_symbol_count[i];
+  }
+  return freq;
 }

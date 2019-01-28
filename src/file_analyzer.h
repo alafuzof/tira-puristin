@@ -26,6 +26,9 @@ public:
   /// Gets the symbol probabilities for the most recent input
   /// \return the probability of each symbol (including unseen symbols)
   float *probabilities();
+  /// Get the symbol frequencies for the most recent input
+  /// \return the frequency of each symbol (including unseen symbols)
+  unsigned int *frequencies();
 
   /// Prints a summary of the analysis results on the previous input
   void print_report();

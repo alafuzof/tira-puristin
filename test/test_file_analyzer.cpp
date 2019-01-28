@@ -51,3 +51,12 @@ TEST_F(FileAnalyzerTest, EntropyIsOrderInvariant) {
 
   EXPECT_EQ(ent1, ent2);
 }
+
+TEST_F(FileAnalyzerTest, FileAnalyzerRestoresStreamPosition) {
+  std::istringstream input("abcd");
+  std::streampos start_pos = input.tellg();
+  fa->analyze(input);
+  std::streampos final_pos = input.tellg();
+
+  EXPECT_EQ(start_pos, final_pos);
+}
