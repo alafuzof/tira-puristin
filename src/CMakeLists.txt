@@ -1,5 +1,6 @@
 set(LIB_SRC
-  file_analyzer.cpp)
+  file_analyzer.cpp
+  bit_reader.cpp)
 
 add_library(puristinlib ${LIB_SRC})
 
