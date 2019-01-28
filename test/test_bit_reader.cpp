@@ -53,7 +53,7 @@ TEST_F(BitReaderTest, ReadBytesFromLeftToRight) {
   ASSERT_EQ('c', br->read_byte());
 }
 
-TEST_F(BitReaderTest, NonAlignedByteReads) {
+TEST_F(BitReaderTest, ReadNonAlignedByte) {
   // The first two bytes are 01100001 01100010
   // Try reading 0(1100001 0)110 0010 --> 128+64+2=194
   ASSERT_EQ(false, br->read_bit());
