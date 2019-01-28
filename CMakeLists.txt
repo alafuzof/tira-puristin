@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.5)
 # Project name
 project(tira-puristin)
 
+# Target C++11
+set (CMAKE_CXX_STANDARD 11)
+
 # Version number
 set(VERSION_MAJOR 0 CACHE STRING "Project major version number.")
 set(VERSION_MINOR 2 CACHE STRING "Project minor version number.")
