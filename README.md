@@ -1,4 +1,4 @@
-# tira-puristin
+# tira-puristin [![Build Status](https://travis-ci.org/alafuzof/tira-puristin.svg?branch=master)](https://travis-ci.org/alafuzof/tira-puristin)
 Data structures and algorithms coursework 2019/1 - data compressor
 
 Tietorakenteet ja algoritmit harjoitustyö 2019/1 - tiedon pakkaus
