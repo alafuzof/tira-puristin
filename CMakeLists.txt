@@ -5,7 +5,14 @@ cmake_minimum_required(VERSION 3.5)
 project(tira-puristin)
 
 # Target C++11
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
+
+add_compile_options(
+  "-Wall" "-Wpedantic" "-Wextra"
+  "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb;-fprofile-arcs;-ftest-coverage;--coverage>"
+)
+SET(GCC_COVERAGE_LINK_FLAGS "-lgcov --coverage")
+SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 # Version number
 set(VERSION_MAJOR 0 CACHE STRING "Project major version number.")
@@ -26,7 +33,7 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
         ${CMAKE_BINARY_DIR}/googletest-build)
 
 # Move binaries to the build root directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Include (headers)
 include_directories(./src)

@@ -2,10 +2,24 @@ language: cpp
 
 dist: xenial
 
+addons:
+  apt:
+    packages: lcov
+
 before_script:
   - cd build
   - cmake ..
 
 script:
   - make
+  # Generate coverage reports and run tests
+  - lcov --capture --initial --directory . --output-file cov_base.info
   - ./puristin_test
+  - lcov --capture --directory . --output-file cov_test.info
+  - lcov --add-tracefile cov_base.info --add-tracefile cov_test.info -o coverage.info
+  - rm cov_base.info cov_test.info
+  - lcov --remove coverage.info '/usr/*' '*test*' -o coverage.info
+  - lcov --list coverage.info
+
+after_success:
+  #- bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"

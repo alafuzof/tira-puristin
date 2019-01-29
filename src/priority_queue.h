@@ -30,7 +30,7 @@ public:
     m_length = 0;
     m_priority = priority_type;
 
-    for(int i=0; i<max_length; i++) {
+    for(unsigned int i=0; i<max_length; i++) {
       m_heap[i].value = T();
       m_heap[i].priority = NAN;
     }
@@ -47,7 +47,7 @@ public:
     m_length = length;
     m_priority = priority_type;
 
-    for(int i=0; i<length; i++) {
+    for(unsigned int i=0; i<length; i++) {
       m_heap[i].value = values[i];
       m_heap[i].priority = priorities[i];
     };

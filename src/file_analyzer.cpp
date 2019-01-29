@@ -75,9 +75,9 @@ void FileAnalyzer::print_report() {
   for(int i=0; i<10; i++) {
     Element<char> el = pq.pop();
     if(el.value < 33 || el.value > 126)
-      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t \t" << this->m_symbol_count[el.value] << std::endl;
+      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t \t" << this->m_symbol_count[(int)el.value] << std::endl;
     else
-      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t " << el.value << "\t" << this->m_symbol_count[el.value] << std::endl;
+      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t " << el.value << "\t" << this->m_symbol_count[(int)el.value] << std::endl;
   }
 }
 
