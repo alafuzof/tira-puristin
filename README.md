@@ -1,9 +1,13 @@
-# tira-puristin [![Build Status](https://travis-ci.org/alafuzof/tira-puristin.svg?branch=master)](https://travis-ci.org/alafuzof/tira-puristin)
+[![Build Status](https://travis-ci.org/alafuzof/tira-puristin.svg?branch=master)](https://travis-ci.org/alafuzof/tira-puristin) 
+[![codecov](https://codecov.io/gh/alafuzof/tira-puristin/branch/master/graph/badge.svg)](https://codecov.io/gh/alafuzof/tira-puristin)
+
+# tira-puristin
+
 Data structures and algorithms coursework 2019/1 - data compressor
 
 Tietorakenteet ja algoritmit harjoitustyö 2019/1 - tiedon pakkaus
 
-# Palautus 2
+## Palautus 2
 
 [Viikkoraportti 2](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_2.md)
 
@@ -13,7 +17,7 @@ Tietorakenteet ja algoritmit harjoitustyö 2019/1 - tiedon pakkaus
 
 [Käännösohjeet](https://github.com/alafuzof/tira-puristin/tree/master/build)
 
-# Palautus 1
+## Palautus 1
 
 [Viikkoraportti 1](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_1.md)
 
