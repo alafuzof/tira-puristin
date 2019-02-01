@@ -5,7 +5,7 @@
 Tällä viikolla toteutin prioriteettijonon keon avulla PriorityQueue luokassa,
 yksittäisi bittejä syöte- ja tulostevirroista lukevat/kirjoittavat BitWriter ja
 BitReader luokat sekä karkean binääripuuluokan BinaryTree ja alustavan rungon
-Huffman-koodaus luokalle HuffmanCode.
+Huffman-koodausluokalle HuffmanCode.
 
 Lisäksi ohjaajan pyytämä testausraporttien näkyminen on nyt
 toteutettu jatkuvan integroinnin avulla Travis CI sekä Codecov.io palveluiden

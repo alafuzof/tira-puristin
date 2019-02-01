@@ -9,7 +9,7 @@ Tietorakenteet ja algoritmit harjoitustyö 2019/1 - tiedon pakkaus
 
 ## Palautus 3
 
-[Viikkoraportti 3](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_2.md)
+[Viikkoraportti 3](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_3.md)
 
 [Jatkuva integrointi- ja testausraportit](https://travis-ci.org/alafuzof/tira-puristin)
 
