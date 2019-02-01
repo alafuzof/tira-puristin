@@ -5,7 +5,8 @@ set(TEST_SRC
   test_file_analyzer.cpp
   test_priority_queue.cpp
   test_bit_reader.cpp
-  test_bit_writer.cpp)
+  test_bit_writer.cpp
+  test_huffman_code.cpp)
 
 add_executable(puristin_test ${TEST_SRC})
 target_link_libraries(puristin_test gtest gmock_main)

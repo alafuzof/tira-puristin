@@ -36,4 +36,5 @@ public:
 private:
   unsigned int *m_symbol_count; ///< Symbol occurrence counts of most recent input
   unsigned int m_length; ///< Length of most recent input
+  std::string *codebook; ///< Huffman codebook
 };

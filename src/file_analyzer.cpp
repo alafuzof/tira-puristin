@@ -3,6 +3,7 @@
 #include <sstream>
 #include "file_analyzer.h"
 #include "priority_queue.h"
+#include "huffman_code.h"
 
 // Currently the code equates symbol with 8-bit char
 // TODO: wide char support?
@@ -37,6 +38,11 @@ void FileAnalyzer::analyze(std::istream &input) {
   // Restore stream position
   input.clear(); // Clear to reset the fail bit from the final get() above
   input.seekg(pos);
+
+  // Build the Huffman code and get the codebook
+  BinaryTree<unsigned char> *huffman_tree = build_tree(m_symbol_count);
+  codebook = build_codebook(*huffman_tree);
+  //delete huffman_tree;
 }
 
 void FileAnalyzer::analyze(const std::string &input) {
@@ -69,15 +75,22 @@ void FileAnalyzer::print_report() {
   }
   delete[] prob;
 
-  // Print the most common symbols
+  // Print the most common symbols and their frequencies and Huffman codes
   std::cout << "Top 10 symbols:" << std::endl;
-  std::cout << "Ord\tVal\tChar\tCount" << std::endl;
+  std::cout << "Ord\tVal\tChar\tCount\tCode" << std::endl;
   for(int i=0; i<10; i++) {
     Element<char> el = pq.pop();
     if(el.value < 33 || el.value > 126)
-      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t \t" << this->m_symbol_count[(int)el.value] << std::endl;
+      std::cout << std::setw(2) << i+1 << ".\t"
+                << std::setw(3) << (int)el.value << "\t \t"
+                << this->m_symbol_count[(int)el.value] << "\t"
+                << codebook[(int)el.value] << std::endl;
     else
-      std::cout << std::setw(2) << i+1 << ".\t" << std::setw(3) << (int)el.value << "\t " << el.value << "\t" << this->m_symbol_count[(int)el.value] << std::endl;
+      std::cout << std::setw(2) << i+1 << ".\t"
+                << std::setw(3) << (int)el.value << "\t "
+                << el.value << "\t"
+                << this->m_symbol_count[(int)el.value] << "\t"
+                << codebook[(int)el.value] << std::endl;
   }
 }
 
