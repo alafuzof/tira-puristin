@@ -7,6 +7,14 @@ Data structures and algorithms coursework 2019/1 - data compressor
 
 Tietorakenteet ja algoritmit harjoitustyö 2019/1 - tiedon pakkaus
 
+## Palautus 4
+
+[Viikkoraportti 4](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_4.md)
+
+[Toteutusdokumentti](https://github.com/alafuzof/tira-puristin/blob/master/doc/toteutus.md)
+
+[Testausdokumentti](https://github.com/alafuzof/tira-puristin/blob/master/doc/testaus.md)
+
 ## Palautus 3
 
 [Viikkoraportti 3](https://github.com/alafuzof/tira-puristin/blob/master/doc/viikkoraportti_3.md)
