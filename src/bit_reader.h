@@ -15,9 +15,11 @@ public:
   /// \brief Read a byte starting from the current bit position in the input stream.
   /// \return Byte as read from the input stream
   unsigned char read_byte();
-  
+
   std::string read_string();
   int read_int();
+
+  void flush();
 
   /// \brief Convenience "stream operator" for reading bits
   /// \param bit Boolean indicating the bit value

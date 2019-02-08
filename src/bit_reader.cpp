@@ -11,10 +11,8 @@ BitReader::BitReader(std::istream &input) {
 bool BitReader::read_bit() {
   // If we should be reading bits from the next byte, read a new byte into the
   // buffer and reset position
-  if(buffer_position >= 8) {
-    *input_stream >> buffer;
-    buffer_position = 0;
-  }
+  if(buffer_position >= 8)
+    flush();
   // Read bits from left to right
   bool bit = (buffer & (1 << (7-buffer_position)));
   buffer_position++;
@@ -48,6 +46,11 @@ int BitReader::read_int() {
     xp[3-i] = read_byte(); // Little-endian
   }
   return x;
+}
+
+void BitReader::flush() {
+  *input_stream >> buffer;
+  buffer_position = 0;
 }
 
 BitReader &BitReader::operator>>(bool &bit) {
