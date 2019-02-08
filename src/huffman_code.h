@@ -8,8 +8,8 @@ class HuffmanCode {
 public:
   void build_code(std::istream &input);
 
-  void encode(std::istream &input, std::ostream &output);
-  void decode(std::istream &input, std::ostream &output);
+  void encode(std::istream &input, std::ostream &output, bool verbose=false);
+  void decode(std::istream &input, std::ostream &output, bool verbose=false);
 
   BinaryTree<unsigned char> *get_tree();
   std::string *get_codebook();
@@ -17,6 +17,7 @@ public:
 private:
   BinaryTree<unsigned char> *tree;
   std::string *codebook;
+  unsigned int m_length;
 };
 
 BinaryTree<unsigned char> *build_tree(unsigned int *frequencies);
