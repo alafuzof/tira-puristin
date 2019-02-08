@@ -6,13 +6,16 @@ public:
   BitReaderTest() {
     // Stringstream is allocated on heap in order to maintain the data during
     // further function calls
-    iss = new std::istringstream("abc");
+    std::string str = "abcd";
+    str[3] = '\0';
+    iss = new std::istringstream(str, std::ios_base::in|std::ios_base::binary);
     br = new BitReader(*iss);
   };
   ~BitReaderTest() {
     delete iss;
     delete br;
   };
+
   std::istringstream *iss;
   BitReader *br;
 };
@@ -63,11 +66,20 @@ TEST_F(BitReaderTest, ReadNonAlignedByte) {
 TEST_F(BitReaderTest, ReadBitUsingOperator) {
   bool bit = true;
   *br >> bit;
-  ASSERT_EQ(false, bit);
+  EXPECT_EQ(false, bit);
 }
 
 TEST_F(BitReaderTest, ReadByteUsingOperator) {
   unsigned char byte = '\0';
   *br >> byte;
-  ASSERT_EQ('a', byte);
+  EXPECT_EQ('a', byte);
+}
+
+TEST_F(BitReaderTest, ReadString) {
+  EXPECT_STREQ("abc", br->read_string().c_str());
+}
+
+TEST_F(BitReaderTest, ReadInt) {
+  // "abc\0" has the below value, checked using online converter
+  EXPECT_EQ(1633837824, br->read_int());
 }

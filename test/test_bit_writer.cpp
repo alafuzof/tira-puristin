@@ -87,3 +87,13 @@ TEST_F(BitWriterTest, WriteByteUsingOperator) {
   *bw << 'A';
   ASSERT_STREQ("A", oss->str().c_str());
 }
+
+TEST_F(BitWriterTest, WriteString) {
+  bw->write_string("abc");
+  ASSERT_STREQ("abc", oss->str().c_str());
+}
+
+TEST_F(BitWriterTest, WriteInt) {
+  bw->write_int(1633837824);
+  ASSERT_STREQ("abc", oss->str().c_str());
+}

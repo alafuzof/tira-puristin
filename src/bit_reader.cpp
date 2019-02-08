@@ -1,3 +1,4 @@
+#include <sstream>
 #include "bit_reader.h"
 
 BitReader::BitReader(std::istream &input) {
@@ -27,6 +28,26 @@ unsigned char BitReader::read_byte() {
       byte |= (1 << (7-i));
   }
   return byte;
+}
+
+std::string BitReader::read_string() {
+  std::ostringstream oss;
+  while(true) {
+    unsigned char byte = read_byte();
+    oss << byte;
+    if(byte == '\0')
+      break;
+  }
+  return oss.str();
+}
+
+int BitReader::read_int() {
+  int x = 0;
+  unsigned char *xp = (unsigned char*)&x;
+  for(int i=0; i<4; i++) {
+    xp[3-i] = read_byte(); // Little-endian
+  }
+  return x;
 }
 
 BitReader &BitReader::operator>>(bool &bit) {

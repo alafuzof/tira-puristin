@@ -23,6 +23,20 @@ void BitWriter::write_byte(unsigned char byte) {
   }
 }
 
+void BitWriter::write_string(std::string str) {
+  for(unsigned int i=0; i<str.length(); i++) {
+    write_byte((unsigned char)str[i]);
+  }
+  write_byte('\0');
+}
+
+void BitWriter::write_int(int i) {
+  unsigned char *ip = (unsigned char *)&i;
+  for(int j=0; j<4; j++) {
+    write_byte(ip[3-j]); // Little-endian
+  }
+}
+
 void BitWriter::flush() {
   // Flushing writes the buffer to the stream and resets the buffer and position
   if(buffer_position != 0) {
