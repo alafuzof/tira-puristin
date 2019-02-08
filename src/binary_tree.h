@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include "bit_reader.h"
+#include "bit_writer.h"
 
 /// \brief Basic binary tree with arbitrary associated data
 template <class T>
@@ -52,7 +54,7 @@ public:
 
   /// \brief Convenience function for printing the node and all its children
   /// \param indent Number of indentation characters for printing
-  void print_tree(unsigned int indent) {
+  void print_tree(unsigned int indent=0) {
     std::cout << std::setfill('-') << std::setw(indent) << "" << "Value: " << value << std::endl;
     if(left_child != nullptr) {
       std::cout << std::setfill('-') << std::setw(indent) << "" << "Left:" << std::endl;
@@ -66,5 +68,51 @@ public:
     } else {
       std::cout << std::setfill('-') << std::setw(indent) << "" << "Right: (none)" << std::endl;
     }
-  }
+  };
+
+  void write(BitWriter &writer) {
+    int n_bytes = sizeof(value);
+    unsigned char *value_bytes = (unsigned char *)(&value);
+    for(int i=0; i<n_bytes; i++) {
+      writer.write_byte(value_bytes[i]);
+    }
+
+    if(left_child == nullptr) {
+      writer.write_bit(false);
+    } else {
+      writer.write_bit(true);
+      left_child->write(writer);
+    }
+
+    if(right_child == nullptr) {
+      writer.write_bit(false);
+    } else {
+      writer.write_bit(true);
+      right_child->write(writer);
+    }
+  };
+
+  void read(BitReader &reader) {
+    int n_bytes = sizeof(value);
+    unsigned char *bytes = new unsigned char[n_bytes];
+    for(int i=0; i<n_bytes; i++) {
+      bytes[i] = reader.read_byte();
+    }
+    value = *(T*)(bytes);
+    delete[] bytes;
+
+    if(reader.read_bit()) {
+      left_child = new BinaryTree<T>();
+      left_child->read(reader);
+    } else {
+      left_child = nullptr;
+    }
+
+    if(reader.read_bit()) {
+      right_child = new BinaryTree<T>();
+      right_child->read(reader);
+    } else {
+      right_child = nullptr;
+    }
+  };
 };

@@ -25,9 +25,11 @@ void BitWriter::write_byte(unsigned char byte) {
 
 void BitWriter::flush() {
   // Flushing writes the buffer to the stream and resets the buffer and position
-  *output_stream << buffer;
-  buffer = 0;
-  buffer_position = 0;
+  if(buffer_position != 0) {
+    *output_stream << buffer;
+    buffer = 0;
+    buffer_position = 0;
+  }
 }
 
 BitWriter &BitWriter::operator<<(bool bit) {
