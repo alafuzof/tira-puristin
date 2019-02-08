@@ -93,3 +93,10 @@ TEST_F(CharQueueTest, PoppingReturnsMinElementsFromMinQueue) {
   top = min_queue->pop();
   EXPECT_EQ('c', top.value);
 }
+
+TEST_F(CharQueueTest, UnableToPushBeyondMaxLength) {
+  PriorityQueue<char> q(2, MAX_PRIORITY);
+  EXPECT_EQ(1, q.push('a',1));
+  EXPECT_EQ(2, q.push('a',1));
+  EXPECT_EQ(-1, q.push('a',1));
+}

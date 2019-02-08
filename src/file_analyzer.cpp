@@ -76,21 +76,23 @@ void FileAnalyzer::print_report() {
   delete[] prob;
 
   // Print the most common symbols and their frequencies and Huffman codes
-  std::cout << "Top 10 symbols:" << std::endl;
-  std::cout << "Ord\tVal\tChar\tCount\tCode" << std::endl;
-  for(int i=0; i<10; i++) {
-    Element<char> el = pq.pop();
-    if(el.value < 33 || el.value > 126)
-      std::cout << std::setw(2) << i+1 << ".\t"
-                << std::setw(3) << (int)el.value << "\t \t"
-                << this->m_symbol_count[(int)el.value] << "\t"
-                << codebook[(int)el.value] << std::endl;
-    else
-      std::cout << std::setw(2) << i+1 << ".\t"
-                << std::setw(3) << (int)el.value << "\t "
-                << el.value << "\t"
-                << this->m_symbol_count[(int)el.value] << "\t"
-                << codebook[(int)el.value] << std::endl;
+  if(!pq.empty()) {
+    std::cout << "Top " << std::min((int)pq.length(), 20) << " symbols:" << std::endl;
+    std::cout << "Ord\tVal\tChar\tCount\tCode" << std::endl;
+    for(int i=0; i<std::min((int)pq.length(), 20); i++) {
+      Element<char> el = pq.pop();
+      if(el.value < 33 || el.value > 126)
+        std::cout << std::setw(2) << i+1 << ".\t"
+                  << std::setw(3) << (int)el.value << "\t \t"
+                  << this->m_symbol_count[(int)el.value] << "\t"
+                  << codebook[(int)el.value] << std::endl;
+      else
+        std::cout << std::setw(2) << i+1 << ".\t"
+                  << std::setw(3) << (int)el.value << "\t "
+                  << el.value << "\t"
+                  << this->m_symbol_count[(int)el.value] << "\t"
+                  << codebook[(int)el.value] << std::endl;
+    }
   }
 }
 

@@ -60,3 +60,23 @@ TEST_F(FileAnalyzerTest, FileAnalyzerRestoresStreamPosition) {
 
   EXPECT_EQ(start_pos, final_pos);
 }
+
+TEST_F(FileAnalyzerTest, FrequenciesAreZeroBeforeAnalysis) {
+  unsigned int *freq = fa->frequencies();
+  for(unsigned int i=0; i<256; i++) {
+    EXPECT_EQ(0, freq[i]);
+  }
+}
+
+TEST_F(FileAnalyzerTest, FrequenciesReflectAnalyzedInput) {
+  fa->analyze("abbcccdddd");
+  unsigned int *freq = fa->frequencies();
+  EXPECT_EQ(1, freq['a']);
+  EXPECT_EQ(2, freq['b']);
+  EXPECT_EQ(3, freq['c']);
+  EXPECT_EQ(4, freq['d']);
+}
+
+TEST_F(FileAnalyzerTest, PrintingReportDoesNotThrowException) {
+  EXPECT_NO_THROW(fa->print_report());
+}
