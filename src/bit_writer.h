@@ -17,6 +17,7 @@ public:
   void write_byte(unsigned char byte);
 
   void write_string(std::string str);
+  void write_bitstring(std::string bstr);
   void write_int(int i);
 
   /// \brief Flush the buffer to the output stream filling with zeros if necessary

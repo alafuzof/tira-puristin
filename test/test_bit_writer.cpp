@@ -97,3 +97,8 @@ TEST_F(BitWriterTest, WriteInt) {
   bw->write_int(1633837824);
   ASSERT_STREQ("abc", oss->str().c_str());
 }
+
+TEST_F(BitWriterTest, WriteBitString) {
+  bw->write_bitstring("0110 0001 0000 0000");
+  ASSERT_STREQ("a", oss->str().c_str());
+}

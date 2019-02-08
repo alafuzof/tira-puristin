@@ -30,6 +30,19 @@ void BitWriter::write_string(std::string str) {
   write_byte('\0');
 }
 
+void BitWriter::write_bitstring(std::string bstr) {
+  for(unsigned int i=0; i<bstr.length(); i++) {
+    switch(bstr[i]) {
+      case '0': write_bit(false);
+                break;
+      case '1': write_bit(true);
+                break;
+      case ' ': break;
+      default:  throw std::logic_error("Bit string contained bad character!");
+    }
+  }
+}
+
 void BitWriter::write_int(int i) {
   unsigned char *ip = (unsigned char *)&i;
   for(int j=0; j<4; j++) {
