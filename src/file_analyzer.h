@@ -31,7 +31,7 @@ public:
   unsigned int *frequencies();
 
   /// Prints a summary of the analysis results on the previous input
-  void print_report();
+  void print_report(std::ostream &output=std::cout);
 
 private:
   unsigned int *m_symbol_count; ///< Symbol occurrence counts of most recent input

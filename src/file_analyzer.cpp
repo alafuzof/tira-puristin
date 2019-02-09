@@ -51,18 +51,18 @@ void FileAnalyzer::analyze(const std::string &input) {
   this->analyze(stream_input);
 }
 
-void FileAnalyzer::print_report() {
-  std::cout << "File length (bytes):\n"
+void FileAnalyzer::print_report(std::ostream &output) {
+  output << "File length (bytes):\n"
             << this->m_length << '\n' << std::endl;
 
   float ent = this->entropy();
-  std::cout << "First order entropy (bits / symbol):\n"
+  output << "First order entropy (bits / symbol):\n"
             << ent << '\n' << std::endl;
 
   // The minimum file size is assuming an entropy based single symbol encoding
   // scheme. The actual minimum file size may be lower, if there is additional
   // structure to the data
-  std::cout << "\"Minimum\" file size:\n"
+  output << "\"Minimum\" file size:\n"
             << ent*this->m_length << " bits\n"
             << ent*this->m_length/8 << " bytes\n" << std::endl;
 
@@ -77,21 +77,21 @@ void FileAnalyzer::print_report() {
 
   // Print the most common symbols and their frequencies and Huffman codes
   if(!pq.empty()) {
-    std::cout << "Top " << std::min((int)pq.length(), 20) << " symbols:" << std::endl;
-    std::cout << "Ord\tVal\tChar\tCount\tCode" << std::endl;
+    output << "Top " << std::min((int)pq.length(), 20) << " symbols:" << std::endl;
+    output << "Ord\tVal\tChar\tCount\tCode" << std::endl;
     for(int i=0; i<std::min((int)pq.length(), 20); i++) {
       Element<char> el = pq.pop();
       if(el.value < 33 || el.value > 126)
-        std::cout << std::setw(2) << i+1 << ".\t"
-                  << std::setw(3) << (int)el.value << "\t \t"
-                  << this->m_symbol_count[(int)el.value] << "\t"
-                  << codebook[(int)el.value] << std::endl;
+        output << std::setw(2) << i+1 << ".\t"
+               << std::setw(3) << (int)el.value << "\t \t"
+               << this->m_symbol_count[(int)el.value] << "\t"
+               << codebook[(int)el.value] << std::endl;
       else
-        std::cout << std::setw(2) << i+1 << ".\t"
-                  << std::setw(3) << (int)el.value << "\t "
-                  << el.value << "\t"
-                  << this->m_symbol_count[(int)el.value] << "\t"
-                  << codebook[(int)el.value] << std::endl;
+        output << std::setw(2) << i+1 << ".\t"
+               << std::setw(3) << (int)el.value << "\t "
+               << el.value << "\t"
+               << this->m_symbol_count[(int)el.value] << "\t"
+               << codebook[(int)el.value] << std::endl;
     }
   }
 }

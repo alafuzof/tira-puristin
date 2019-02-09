@@ -78,5 +78,6 @@ TEST_F(FileAnalyzerTest, FrequenciesReflectAnalyzedInput) {
 }
 
 TEST_F(FileAnalyzerTest, PrintingReportDoesNotThrowException) {
-  EXPECT_NO_THROW(fa->print_report());
+  std::ostringstream oss;
+  EXPECT_NO_THROW(fa->print_report(oss));
 }
