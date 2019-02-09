@@ -22,20 +22,24 @@ void HuffmanCode::build_code(std::istream &input) {
 void HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose) {
   if(verbose) {std::cout << "Building Huffman code for input" << std::endl;}
   build_code(input);
+  if(verbose) {std::cout << "Constructed codebook:" << std::endl; print_codebook(codebook);}
 
   BitWriter bw(output);
   if(verbose) {std::cout << "Writing file signature" << std::endl;}
   bw.write_string("TIRA_PURISTIN");
   if(verbose) {std::cout << "Writing Huffman tree" << std::endl;}
+  //tree->print_tree();
   tree->write(bw);
   bw.flush();
+  //return;
   if(verbose) {std::cout << "Writing symbol count" << std::endl;}
   bw.write_int((int)m_length);
   char c = '\0';
   if(verbose) {std::cout << "Starting to encode and write " << m_length << " symbols" << std::endl;}
   for(unsigned int i=0; i<m_length; i++) {
-    input >> c;
+    input.get(c);
     bw.write_bitstring(codebook[(unsigned char)c]);
+    //std::cout << "Writing character " << c << " bitstring " << codebook[(unsigned char)c] << std::endl;
   }
   bw.flush();
   if(verbose) {std::cout << "Done!" << std::endl;}
@@ -55,24 +59,35 @@ void HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose
   tree = new BinaryTree<unsigned char>();
   tree->read(br);
   br.flush();
+  codebook = build_codebook(*tree);
+  if(verbose) {std::cout << "Reconstructed codebook:" << std::endl; print_codebook(codebook);}
+
+  //tree->print_tree();
   if(verbose) {std::cout << "Reading symbol count" << std::endl;}
   m_length = (unsigned int)br.read_int();
   BinaryTree<unsigned char> *node = tree;
   if(verbose) {std::cout << "Starting to decode and write " << m_length << " symbols" << std::endl;}
-  for(unsigned int i=0; i<m_length; i++) {
+  unsigned int i = 0;
+  //std::cout << "Reading bits: ";
+  while(i < m_length) {
     bool bit = br.read_bit();
     if((bit && node->left_child == nullptr) || (!bit && node->right_child == nullptr)) {
       std::cerr << "Encountered impossible bit during read" << std::endl;
       return;
     }
-    if(bit)
+    if(!bit) {
+      //std::cout << "0";
       node = node->left_child;
-    else
+    } else {
+      //std::cout << "1";
       node = node->right_child;
+    }
 
     if(node->leaf()) {
+      //std::cout << " decoded: " << node->value << "\n" << "Reading bits: ";
       output << node->value;
       node = tree;
+      i++;
     }
   }
   if(verbose) {std::cout << "Done!" << std::endl;}
@@ -135,4 +150,15 @@ std::string *build_codebook(BinaryTree<unsigned char> root) {
   }
 
   return codebook;
+}
+
+void print_codebook(std::string *codebook, std::ostream &output) {
+  for(int i=0; i<256; i++) {
+    if(!codebook[i].empty()) {
+      if(i < 33 || i > 126)
+        output << i << "\t \t" << codebook[i] << std::endl;
+      else
+        output << i << "\t" << (char)i << "\t" << codebook[i] << std::endl;
+    }
+  }
 }

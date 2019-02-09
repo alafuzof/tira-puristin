@@ -4,18 +4,20 @@
 BitReader::BitReader(std::istream &input) {
   input_stream = &input;
   // Initialize buffer and position
-  *input_stream >> buffer;
+  input_stream->get((char&)buffer);
   buffer_position = 0;
 }
 
 bool BitReader::read_bit() {
+
+
+  // Read bits from left to right
+  bool bit = (buffer & (1 << (7-buffer_position)));
+  buffer_position++;
   // If we should be reading bits from the next byte, read a new byte into the
   // buffer and reset position
   if(buffer_position >= 8)
     flush();
-  // Read bits from left to right
-  bool bit = (buffer & (1 << (7-buffer_position)));
-  buffer_position++;
   return bit;
 }
 
@@ -49,7 +51,9 @@ int BitReader::read_int() {
 }
 
 void BitReader::flush() {
-  *input_stream >> buffer;
+  //std::cout << "Buffer was " << std::hex << (int)buffer;
+  input_stream->get((char&)buffer);
+  //std::cout << " now " << std::hex << (int)buffer << std::endl;
   buffer_position = 0;
 }
 

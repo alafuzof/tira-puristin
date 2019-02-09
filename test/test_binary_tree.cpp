@@ -101,3 +101,13 @@ TEST_F(CharTreeTest, TreeSurvivesRoundTrip) {
   EXPECT_EQ('c', bt.right_child->value);
   EXPECT_EQ(true, bt.right_child->leaf());
 }
+
+TEST_F(CharTreeTest, IdenticalTreesAreEqual) {
+  EXPECT_EQ(true, tree_equality(*leaf, *leaf));
+  EXPECT_EQ(true, tree_equality(*tree, *tree));
+}
+
+TEST_F(CharTreeTest, DifferentTreesAreNotEqual) {
+  EXPECT_EQ(false, tree_equality(*leaf, *tree));
+  EXPECT_EQ(false, tree_equality(*tree, *leaf));
+}

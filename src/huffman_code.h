@@ -22,3 +22,4 @@ private:
 
 BinaryTree<unsigned char> *build_tree(unsigned int *frequencies);
 std::string *build_codebook(BinaryTree<unsigned char> root);
+void print_codebook(std::string *codebook, std::ostream &output=std::cout);

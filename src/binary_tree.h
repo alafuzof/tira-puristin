@@ -116,3 +116,17 @@ public:
     }
   };
 };
+
+template <class T>
+bool tree_equality(BinaryTree<T> &a, BinaryTree<T> &b) {
+  bool flag = true;
+  flag = flag && (a.value == b.value);
+  if((a.left_child != nullptr && b.left_child == nullptr) ||
+     (a.left_child == nullptr && b.left_child != nullptr))
+     return false;
+  if(a.left_child != nullptr)
+    flag = flag && tree_equality(*a.left_child, *b.left_child);
+  if(a.right_child != nullptr)
+    flag = flag && tree_equality(*a.right_child, *b.right_child);
+  return flag;
+}
