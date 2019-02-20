@@ -1,4 +1,5 @@
-#include <stdexception>
+#include <stdexcept>
+#include <string>
 #include "lzw_dictionary.h"
 
 struct DictionaryEntry {
@@ -6,10 +7,10 @@ struct DictionaryEntry {
   unsigned char byte;
   int first_index;
   int next_index;
-}
+};
 
-LZWDictionary::LZWDictionary(unsinged int n_bits) {
-  if(n_bits < 9 || n_bits > 16) {
+LZWDictionary::LZWDictionary(unsigned int n_bits) {
+  if(n_bits < 9 || n_bits > 16) {
     throw std::domain_error("Number of bits must be between 9 and 16");
   }
   this->n_bits = n_bits;
@@ -17,61 +18,68 @@ LZWDictionary::LZWDictionary(unsinged int n_bits) {
   reset();
 }
 
-LZWDictionary::~LZWDictionary() {
+LZWDictionary::~LZWDictionary() {
   delete[] entries;
 }
 
 int LZWDictionary::query(int prefix, unsigned char byte) {
+  // If there is no prefix, the index is determined by the byte
   if(prefix == -1) {
     return (int)byte;
   }
-  int idx = entries[prefix].first;
+  // Search through the prefix first list
+  int idx = entries[prefix].first_index;
   while(idx != -1) {
     if(entries[idx].byte == byte) {
-      return idx
+      return idx;
     }
-    idx = entries[idx].next;
+    idx = entries[idx].next_index;
   }
   return -1;
 }
 
-std::string LZWDictionary::insert(int prefix, unsigned char byte) {
-  entries[n_entries].prefix = prefix;
+int LZWDictionary::insert(int prefix, unsigned char byte) {
+  // If trying to insert default symbol or the dictionary is full, return the null index
+  if(n_entries >= (unsigned int)((1 << n_bits) - 1))
+    return -1;
+
+  // If trying to insert one of the default symbols, just return its index instead
+  if(prefix == -1)
+    return (unsigned int)byte;
+
+  // If the prefix does not have a 'first' link, link the new entry there
+  if(entries[prefix].first_index == -1) {
+    entries[prefix].first_index = n_entries;
+  }
+  // Else follow the next chain of the prefix first and place the new entry
+  // at the end
+  else {
+    int idx = entries[prefix].first_index;
+    // If we encounter the string to be added, return its index
+    if(entries[idx].byte == byte)
+      return idx;
+
+    while(entries[idx].next_index != -1) {
+      idx = entries[idx].next_index;
+
+      // If we encounter the string to be added, return its index
+      if(entries[idx].byte == byte)
+        return idx;
+    }
+    entries[idx].next_index = n_entries;
+  }
+
+  // Add the new entry
+  entries[n_entries].prefix_index = prefix;
   entries[n_entries].byte = byte;
   entries[n_entries].first_index = -1;
   entries[n_entries].next_index = -1;
-  if(entries[prefix].first == -1) {
-    entries[prefix].first = n_entries;
-    n_entries++;
-    if(n_entries >= ((1 << n_bits) - 1)) {
-      reset();
-      return int_to_bitstring(prefix) + int_to_bitstring((1 << n_bits)-1);
-    } else {
-      return int_to_bitstring(prefix);
-    }
-  } else {
-    int idx = entries[prefix].first;
-    while(true) {
-      if(entries[idx].next != -1) {
-        idx = entries[idx].next;
-        continue;
-      } else {
-        break;
-      }
-    }
-    entries[idx].next = n_entries;
-    n_entries++;
-    if(n_entries >= ((1 << n_bits) - 1)) {
-      reset();
-      return int_to_bitstring(prefix) + int_to_bitstring((1 << n_bits)-1);
-    } else {
-      return int_to_bitstring(prefix);
-    }
-  }
+
+  return n_entries++;
 }
 
 
-void LZWDictionary::reset() {
+int LZWDictionary::reset() {
   for(int i=0; i<256; i++) {
     entries[i].prefix_index = -1;
     entries[i].byte = (unsigned char)i;
@@ -79,16 +87,14 @@ void LZWDictionary::reset() {
     entries[i].next_index = -1;
   }
   n_entries = 256;
+
+  return ((1 << n_bits)-1); // reset code
 }
 
-std::string int_to_bitstring(int value, unsigned int n_bits) {
-  std::string res = ""
-  for(int i=0; i<n_bits; i++) {
-    if((value >> (n_bits-i)) & 1) {
-      res += "1";
-    } else {
-      res += "0";
-    }
-  }
-  return res;
+unsigned int LZWDictionary::num_bits() {
+  return n_bits;
+}
+
+unsigned int LZWDictionary::num_entries() {
+  return n_entries;
 }

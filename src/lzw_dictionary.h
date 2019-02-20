@@ -14,9 +14,12 @@ public:
   // Queries the dictionary for a string with the given prefix and final byte
   int query(int prefix, unsigned char byte);
   // Inserts a new string with the given prefix and final byte into the dictionary
-  std::string insert(int prefix, unsigned char byte);
+  int insert(int prefix, unsigned char byte);
   // Resets the dictionary
-  void reset();
+  int reset();
+
+  unsigned int num_entries();
+  unsigned int num_bits();
 
 private:
   unsigned int n_entries;
