@@ -1,8 +1,9 @@
 set(LIB_SRC
-  file_analyzer.cpp
   bit_reader.cpp
   bit_writer.cpp
-  huffman_code.cpp)
+  file_analyzer.cpp
+  huffman_code.cpp
+  lzw_dictionary.cpp)
 
 add_library(puristinlib ${LIB_SRC})
 
