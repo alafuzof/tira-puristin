@@ -50,6 +50,15 @@ int BitReader::read_int() {
   return x;
 }
 
+unsigned int BitReader::read_uint(unsigned int n_bits) {
+  n_bits = std::min(n_bits, (unsigned int)32);
+  unsigned int x = 0;
+  for(int i=n_bits-1; i>=0; i--)
+    if(read_bit())
+      x = x | (1 << i);
+  return x;
+}
+
 void BitReader::flush() {
   //std::cout << "Buffer was " << std::hex << (int)buffer;
   input_stream->get((char&)buffer);

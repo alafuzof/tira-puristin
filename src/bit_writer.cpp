@@ -50,6 +50,12 @@ void BitWriter::write_int(int i) {
   }
 }
 
+void BitWriter::write_uint(unsigned int i, unsigned int n_bits) {
+  for(int j=n_bits-1; j>=0; j--) {
+    write_bit((i>>j) & 1);
+  }
+}
+
 void BitWriter::flush() {
   // Flushing writes the buffer to the stream and resets the buffer and position
   if(buffer_position != 0) {

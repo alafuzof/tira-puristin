@@ -18,6 +18,7 @@ public:
 
   std::string read_string();
   int read_int();
+  unsigned int read_uint(unsigned int n_bits);
 
   void flush();
 

@@ -83,3 +83,19 @@ TEST_F(BitReaderTest, ReadInt) {
   // "abc\0" has the below value, checked using online converter
   EXPECT_EQ(1633837824, br->read_int());
 }
+
+TEST_F(BitReaderTest, ReadUint4Bits) {
+  EXPECT_EQ(6, br->read_uint(4));
+  EXPECT_EQ(1, br->read_uint(4));
+  EXPECT_EQ(6, br->read_uint(4));
+  EXPECT_EQ(2, br->read_uint(4));
+  EXPECT_EQ(6, br->read_uint(4));
+  EXPECT_EQ(3, br->read_uint(4));
+}
+
+TEST_F(BitReaderTest, ReadUint6Bits) {
+  EXPECT_EQ(24, br->read_uint(6));
+  EXPECT_EQ(22, br->read_uint(6));
+  EXPECT_EQ(9,  br->read_uint(6));
+  EXPECT_EQ(35, br->read_uint(6));
+}

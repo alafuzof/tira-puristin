@@ -102,3 +102,23 @@ TEST_F(BitWriterTest, WriteBitString) {
   bw->write_bitstring("0110 0001 0000 0000");
   ASSERT_STREQ("a", oss->str().c_str());
 }
+
+TEST_F(BitWriterTest, WriteUint4) {
+  bw->write_uint(6, 4);
+  bw->write_uint(1, 4);
+  bw->write_uint(6, 4);
+  bw->write_uint(2, 4);
+  bw->write_uint(6, 4);
+  bw->write_uint(3, 4);
+  bw->write_byte('\0');
+  ASSERT_STREQ("abc", oss->str().c_str());
+}
+
+TEST_F(BitWriterTest, WriteUint6) {
+  bw->write_uint(24, 6);
+  bw->write_uint(22, 6);
+  bw->write_uint(9, 6);
+  bw->write_uint(35, 6);
+  bw->write_byte('\0');
+  ASSERT_STREQ("abc", oss->str().c_str());
+}
