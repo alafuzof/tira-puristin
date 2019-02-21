@@ -15,11 +15,14 @@ LZWDictionary::LZWDictionary(unsigned int n_bits) {
   }
   this->n_bits = n_bits;
   entries = new DictionaryEntry[1 << n_bits];
+  prev_seq.length = 0;
+  prev_seq.bytes = new unsigned char[1 << n_bits];
   reset();
 }
 
 LZWDictionary::~LZWDictionary() {
   delete[] entries;
+  delete[] prev_seq.bytes;
 }
 
 int LZWDictionary::query(int prefix, unsigned char byte) {
@@ -36,6 +39,20 @@ int LZWDictionary::query(int prefix, unsigned char byte) {
     idx = entries[idx].next_index;
   }
   return -1;
+}
+
+ByteSequence LZWDictionary::query(int index) {
+  prev_seq.length = 0;
+  int idx = index;
+  int i = 0;
+  while(idx != -1) {
+    prev_seq.bytes[i] = entries[idx].byte;
+    prev_seq.length++;
+    idx = entries[idx].prefix_index;
+    i++;
+  }
+
+  return prev_seq;
 }
 
 int LZWDictionary::insert(int prefix, unsigned char byte) {
