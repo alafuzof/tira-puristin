@@ -1,6 +1,7 @@
 set(LIB_SRC
   bit_reader.cpp
   bit_writer.cpp
+  cli.cpp
   file_analyzer.cpp
   huffman_code.cpp
   lzw_dictionary.cpp)
