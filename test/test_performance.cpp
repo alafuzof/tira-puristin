@@ -10,7 +10,7 @@ class DickensTest : public ::testing::Test {
 public:
   DickensTest() {
     hc = new HuffmanCode();
-    std::ifstream t("../test/data/dickens");
+    std::ifstream t("./test_data/dickens");
     str = new std::string((std::istreambuf_iterator<char>(t)),
                  std::istreambuf_iterator<char>());
   };
