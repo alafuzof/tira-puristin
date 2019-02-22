@@ -3,4 +3,6 @@
 Ohjelman testaus toistaiseksi rajoittuu koodin toiminnallisuutta tarkastaviin
 yksikkötesteihin.
 
-Suorituskykytestaus alkaa, kun ohjelman perustoiminnallisuus on tehty.
+# Suorituskykytestaus
+
+![Huffman performance](/doc/images/huffman_perf_dickens.png)
