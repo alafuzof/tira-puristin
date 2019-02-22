@@ -7,6 +7,7 @@ set(TEST_SRC
   test_bit_writer.cpp
   test_file_analyzer.cpp
   test_huffman_code.cpp
+  test_lzw_code.cpp
   test_lzw_dictionary.cpp
   test_priority_queue.cpp)
 

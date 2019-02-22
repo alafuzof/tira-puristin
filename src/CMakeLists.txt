@@ -4,6 +4,7 @@ set(LIB_SRC
   cli.cpp
   file_analyzer.cpp
   huffman_code.cpp
+  lzw_code.cpp
   lzw_dictionary.cpp)
 
 add_library(puristinlib ${LIB_SRC})
