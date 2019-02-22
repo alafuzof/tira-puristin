@@ -9,6 +9,7 @@ set(TEST_SRC
   test_huffman_code.cpp
   test_lzw_code.cpp
   test_lzw_dictionary.cpp
+  test_performance.cpp
   test_priority_queue.cpp)
 
 add_executable(puristin_test ${TEST_SRC})
