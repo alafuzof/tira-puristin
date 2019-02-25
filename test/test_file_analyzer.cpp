@@ -76,8 +76,3 @@ TEST_F(FileAnalyzerTest, FrequenciesReflectAnalyzedInput) {
   EXPECT_EQ(3, freq['c']);
   EXPECT_EQ(4, freq['d']);
 }
-
-TEST_F(FileAnalyzerTest, PrintingReportDoesNotThrowException) {
-  std::ostringstream oss;
-  EXPECT_NO_THROW(fa->print_report(oss));
-}

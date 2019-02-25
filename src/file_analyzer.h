@@ -30,11 +30,8 @@ public:
   /// \return the frequency of each symbol (including unseen symbols)
   unsigned int *frequencies();
 
-  /// Prints a summary of the analysis results on the previous input
-  void print_report(std::ostream &output=std::cout);
 
 private:
-  unsigned int *m_symbol_count; ///< Symbol occurrence counts of most recent input
-  unsigned int m_length; ///< Length of most recent input
-  std::string *codebook; ///< Huffman codebook
+  unsigned int *symbol_count; ///< Symbol occurrence counts of most recent input
+  unsigned int input_length; ///< Length of most recent input
 };

@@ -2,6 +2,7 @@
 #include <fstream>
 #include "file_analyzer.h"
 #include "huffman_code.h"
+#include "priority_queue.h"
 #include "cli.h"
 
 
@@ -40,7 +41,58 @@ int CLI::analyze(std::ostream &output) {
   std::ifstream input_file(argv[2], std::ifstream::binary);
   FileAnalyzer fa;
   fa.analyze(input_file);
-  fa.print_report();
+  //fa.print_report();
+
+  // Build the Huffman code and get the codebook
+  BinaryTree<unsigned char> *huffman_tree = build_tree(fa.frequencies());
+  std::string *codebook = nullptr;
+  if(huffman_tree != nullptr)
+    codebook = build_codebook(*huffman_tree);
+
+  output << "File length (bytes):\n"
+         << fa.length() << '\n' << std::endl;
+
+  output << "First order entropy (bits / symbol):\n"
+         << fa.entropy() << '\n' << std::endl;
+
+  // The minimum file size is assuming an entropy based single symbol encoding
+  // scheme. The actual minimum file size may be lower, if there is additional
+  // structure to the data
+  output << "\"Minimum\" file size:\n"
+           << fa.entropy()*fa.length() << " bits\n"
+           << (fa.entropy()*fa.length())/8 << " bytes\n" << std::endl;
+
+  // Sort the symbols by their occurrence/probability
+  float *prob = fa.probabilities();
+  PriorityQueue<char> pq(256, MAX_PRIORITY); // FIXME: 256 hardcoding
+  for(int i=0; i<256; i++) { // FIXME: 256 hardcoding
+   if(prob[i] > 0.0)
+     pq.push((char)i, prob[i]);
+  }
+  delete[] prob;
+
+  unsigned int *freqs = fa.frequencies();
+
+  // Print the most common symbols and their frequencies and Huffman codes
+  if(!pq.empty()) {
+    output << "Top " << std::min((int)pq.length(), 20) << " symbols:" << std::endl;
+    output << "Ord\tVal\tChar\tCount\tCode" << std::endl;
+    for(int i=0; i<std::min((int)pq.length(), 20); i++) {
+      Element<char> el = pq.pop();
+      if(el.value < 33 || el.value > 126)
+        output << std::setw(2) << i+1 << ".\t"
+               << std::setw(3) << (int)el.value << "\t \t"
+               << freqs[(int)el.value] << "\t"
+               << codebook[(int)el.value] << std::endl;
+      else
+        output << std::setw(2) << i+1 << ".\t"
+               << std::setw(3) << (int)el.value << "\t "
+               << el.value << "\t"
+               << freqs[(int)el.value] << "\t"
+               << codebook[(int)el.value] << std::endl;
+    }
+  }
+
   return 0;
 }
 
