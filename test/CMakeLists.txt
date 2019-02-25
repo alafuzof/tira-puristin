@@ -9,12 +9,28 @@ set(TEST_SRC
   test_huffman_code.cpp
   test_lzw_code.cpp
   test_lzw_dictionary.cpp
-  test_performance.cpp
   test_priority_queue.cpp)
 
 add_executable(puristin_test ${TEST_SRC})
 target_link_libraries(puristin_test gtest gmock_main)
 target_link_libraries(puristin_test puristinlib)
+
+if(BUILD_PERF)
+  set(PERF_SRC
+    test.cpp
+    test_performance.cpp)
+
+  add_executable(puristin_perf ${PERF_SRC})
+  target_link_libraries(puristin_perf gtest gmock_main)
+  target_link_libraries(puristin_perf puristinlib)
+
+  message("Downloading and extracting test data (Silesia corpus)")
+  file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
+  file(DOWNLOAD http://sun.aei.polsl.pl/~sdeor/corpus/silesia.zip ${PROJECT_BINARY_DIR}/test_data/silesia.zip SHOW_PROGRESS)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz silesia.zip
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
+
+endif()
 
 if(${CMAKE_VERSION} VERSION_LESS "3.9.0")
   add_test(NAME puristin_test COMMAND puristin_test)

@@ -21,57 +21,24 @@ public:
   std::string *str;
 };
 
-TEST_F(DickensTest, Dickens1kBHuffman) {
-  std::string substr = str->substr(0, 1024);
-  std::istringstream iss(substr);
-  std::ostringstream oss;
-  clock_t start = clock();
-  hc->encode(iss, oss);
-  clock_t stop = clock();
-  std::cout << "1 kB Dickens " <<  (((float)(stop-start))/CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
-  ASSERT_GT(stop-start, 0);
-}
-
-TEST_F(DickensTest, Dickens10kBHuffman) {
-  std::string substr = str->substr(0, 1024*10);
-  std::istringstream iss(substr);
-  std::ostringstream oss;
-  clock_t start = clock();
-  hc->encode(iss, oss);
-  clock_t stop = clock();
-  std::cout << "10 kB Dickens " <<  (((float)(stop-start))/CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
-  ASSERT_GT(stop-start, 0);
-}
-
-TEST_F(DickensTest, Dickens100kBHuffman) {
-  std::string substr = str->substr(0, 1024*100);
-  std::istringstream iss(substr);
-  std::ostringstream oss;
-  clock_t start = clock();
-  hc->encode(iss, oss);
-  clock_t stop = clock();
-  std::cout << "100 kB Dickens " <<  (((float)(stop-start))/CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
-  ASSERT_GT(stop-start, 0);
-}
-
-TEST_F(DickensTest, Dickens1MBHuffman) {
-  std::string substr = str->substr(0, 1024*1024);
-  std::istringstream iss(substr);
-  std::ostringstream oss;
-  clock_t start = clock();
-  hc->encode(iss, oss);
-  clock_t stop = clock();
-  std::cout << "1 MB Dickens " <<  (((float)(stop-start))/CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
-  ASSERT_GT(stop-start, 0);
-}
-
-TEST_F(DickensTest, Dickens10MBHuffman) {
-  std::string substr = str->substr(0, 1024*1024*10);
-  std::istringstream iss(substr);
-  std::ostringstream oss;
-  clock_t start = clock();
-  hc->encode(iss, oss);
-  clock_t stop = clock();
-  std::cout << "10 MB Dickens " <<  (((float)(stop-start))/CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
-  ASSERT_GT(stop-start, 0);
+TEST_F(DickensTest, DickensHuffman) {
+  unsigned int sizes[] = {1,2,3,4,5,6,7,8,9,10};
+  std::cout << "Huffman coding (Dickens)" << std::endl;
+  for(int i=0; i<10; i++) {
+    std::string substr = str->substr(0, sizes[i]*1024*1024);
+    std::istringstream iss(substr);
+    std::stringstream ss;
+    std::ostringstream oss;
+    clock_t t1 = clock();
+    hc->encode(iss, ss);
+    clock_t t2 = clock();
+    hc->decode(ss, oss);
+    clock_t t3 = clock();
+    std::cout << std::setw(2) << sizes[i] << " MB "
+              << "encoding: " << (((float)(t2-t1))/CLOCKS_PER_SEC)*1000 << " ms "
+              << "decoding: " << (((float)(t3-t2))/CLOCKS_PER_SEC)*1000 << " ms "
+              << "compression ratio: " << ((float)iss.str().length())/ss.str().length()
+              << std::endl;
+    ASSERT_STREQ(iss.str().c_str(), oss.str().c_str());
+  }
 }
