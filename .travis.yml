@@ -9,8 +9,6 @@ addons:
 before_script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=Debug ..
-  - mkdir test_data
-  - curl http://sun.aei.polsl.pl/~sdeor/corpus/dickens.bz2 | bzip2 -d > test_data/dickens
 
 script:
   - make
