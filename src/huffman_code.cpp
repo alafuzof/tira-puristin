@@ -4,24 +4,29 @@
 #include "priority_queue.h"
 
 
-void HuffmanCode::build_code(std::istream &input) {
+int HuffmanCode::build_code(std::istream &input) {
   // Calculate symbol frequencies
   FileAnalyzer fa;
   fa.analyze(input);
   m_length = fa.length();
+  if(m_length == 0)
+    return -1;
   unsigned int *freq = fa.frequencies();
 
   // Construct the Huffman tree
   tree = build_tree(freq);
-  delete[] freq; // No longer needed
+  //delete[] freq; // No longer needed
 
   // Construct codebook
   codebook = build_codebook(*tree);
+
+  return 0;
 }
 
-void HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose) {
+int HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose) {
   if(verbose) {std::cout << "Building Huffman code for input" << std::endl;}
-  build_code(input);
+  if(build_code(input) != 0)
+    return -1;
   if(verbose) {std::cout << "Constructed codebook:" << std::endl; print_codebook(codebook);}
 
   BitWriter bw(output);
@@ -47,9 +52,11 @@ void HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose
   }
   bw.flush();
   if(verbose) {std::cout << "Done!" << std::endl;}
+
+  return 0;
 }
 
-void HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose) {
+int HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose) {
   BitReader br(input);
 
   // Read file signature
@@ -58,14 +65,14 @@ void HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose
   if(!s.compare("TIRA_PURISTIN")) {
     std::cerr << "The given input is not a puristin compressed file:" << std::endl;
     std::cerr << "Initial string: " << s << " (should be TIRA_PURISTIN)" << std::endl;
-    return;
+    return -1;
   }
   m_length = (unsigned int)br.read_int();
   s = br.read_string();
   if(!s.compare("HUFFMAN")) {
     std::cerr << "The given input is not Huffman compressed:" << std::endl;
     std::cerr << "Format string: " << s << " (should be HUFFMAN)" << std::endl;
-    return;
+    return -1;
   }
 
   // Read Huffman tree and reconstruct codebook
@@ -88,7 +95,7 @@ void HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose
     //  If we've arrived at a null child, something has gone wrong!
     if(node == nullptr) {
       std::cerr << "Encountered impossible bit during read" << std::endl;
-      return;
+      return -1;
     }
 
     // If we're at a leaf, write out the symbol and restart from root
@@ -99,6 +106,8 @@ void HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose
     }
   }
   if(verbose) {std::cout << "Done!" << std::endl;}
+
+  return 0;
 }
 
 BinaryTree<unsigned char> *HuffmanCode::get_tree() {

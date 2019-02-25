@@ -74,6 +74,9 @@ public:
   };
   ~HuffmanCodeTest() {
     delete hc;
+    delete iss;
+    delete oss;
+    delete ss;
   };
   HuffmanCode *hc;
   std::istringstream *iss;
@@ -82,7 +85,7 @@ public:
 };
 
 TEST_F(HuffmanCodeTest, HuffmanTreeCanBeNavigatedUsingCodebook) {
-  hc->encode(*iss, *ss, false);
+  ASSERT_EQ(0, hc->encode(*iss, *ss, false));
   BinaryTree<unsigned char> *tree = hc->get_tree();
   BinaryTree<unsigned char> *node = tree;
   std::string *codebook = hc->get_codebook();
@@ -106,14 +109,14 @@ TEST_F(HuffmanCodeTest, HuffmanTreeCanBeNavigatedUsingCodebook) {
 }
 
 TEST_F(HuffmanCodeTest, HuffmanTreeCanBeStoredAndRestored) {
-  hc->encode(*iss, *ss);
+  ASSERT_EQ(0, hc->encode(*iss, *ss));
   HuffmanCode hc2;
-  hc2.decode(*ss, *oss);
+  ASSERT_EQ(0, hc2.decode(*ss, *oss));
   EXPECT_EQ(true, tree_equality(*(hc->get_tree()), *(hc2.get_tree())));
 }
 
 TEST_F(HuffmanCodeTest, CompressedDataCanBeRestored) {
-  hc->encode(*iss, *ss);
-  hc->decode(*ss, *oss);
+  ASSERT_EQ(0, hc->encode(*iss, *ss));
+  ASSERT_EQ(0, hc->decode(*ss, *oss));
   EXPECT_STREQ(iss->str().c_str(), oss->str().c_str());
 }

@@ -6,10 +6,10 @@
 
 class HuffmanCode {
 public:
-  void build_code(std::istream &input);
+  int build_code(std::istream &input);
 
-  void encode(std::istream &input, std::ostream &output, bool verbose=false);
-  void decode(std::istream &input, std::ostream &output, bool verbose=false);
+  int encode(std::istream &input, std::ostream &output, bool verbose=false);
+  int decode(std::istream &input, std::ostream &output, bool verbose=false);
 
   BinaryTree<unsigned char> *get_tree();
   std::string *get_codebook();
