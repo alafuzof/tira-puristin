@@ -19,7 +19,7 @@ public:
   // Queries the dictionary for a byte sequence with the given prefix and final byte
   int query(int prefix, unsigned char byte);
   // Queries the dictionary for the full sequence ending at the character at a given index
-  ByteSequence query(int index);
+  ByteSequence *query(int index);
   // Inserts a new string with the given prefix and final byte into the dictionary
   int insert(int prefix, unsigned char byte);
   // Resets the dictionary
@@ -32,5 +32,5 @@ private:
   unsigned int n_entries;
   unsigned int n_bits;
   DictionaryEntry *entries;
-  ByteSequence prev_seq;
+  ByteSequence *prev_seq;
 };

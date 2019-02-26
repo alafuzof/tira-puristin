@@ -10,19 +10,21 @@ struct DictionaryEntry {
 };
 
 LZWDictionary::LZWDictionary(unsigned int n_bits) {
-  if(n_bits < 9 || n_bits > 16) {
-    throw std::domain_error("Number of bits must be between 9 and 16");
+  if(n_bits < 9 || n_bits > 20) {
+    throw std::domain_error("Number of bits must be between 9 and 20");
   }
   this->n_bits = n_bits;
   entries = new DictionaryEntry[1 << n_bits];
-  prev_seq.length = 0;
-  prev_seq.bytes = new unsigned char[1 << n_bits];
+  prev_seq = new ByteSequence;
+  prev_seq->length = 0;
+  prev_seq->bytes = new unsigned char[1 << n_bits];
   reset();
 }
 
 LZWDictionary::~LZWDictionary() {
   delete[] entries;
-  delete[] prev_seq.bytes;
+  delete[] prev_seq->bytes;
+  delete prev_seq;
 }
 
 int LZWDictionary::query(int prefix, unsigned char byte) {
@@ -41,13 +43,13 @@ int LZWDictionary::query(int prefix, unsigned char byte) {
   return -1;
 }
 
-ByteSequence LZWDictionary::query(int index) {
-  prev_seq.length = 0;
+ByteSequence *LZWDictionary::query(int index) {
+  prev_seq->length = 0;
   int idx = index;
   int i = 0;
   while(idx != -1) {
-    prev_seq.bytes[i] = entries[idx].byte;
-    prev_seq.length++;
+    prev_seq->bytes[i] = entries[idx].byte;
+    prev_seq->length++;
     idx = entries[idx].prefix_index;
     i++;
   }

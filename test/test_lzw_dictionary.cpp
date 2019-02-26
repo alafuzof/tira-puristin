@@ -62,10 +62,10 @@ TEST_F(LZWDictionaryTest, QueryingIndexReturnsFullString) {
   int prefix = dict->insert((int)'a', 'b');
   prefix = dict->insert(prefix, 'c');
   prefix = dict->insert(prefix, 'd');
-  ByteSequence res = dict->query(prefix);
-  ASSERT_EQ(4, res.length);
-  ASSERT_EQ('a', res.bytes[3]);
-  ASSERT_EQ('b', res.bytes[2]);
-  ASSERT_EQ('c', res.bytes[1]);
-  ASSERT_EQ('d', res.bytes[0]);
+  ByteSequence *res = dict->query(prefix);
+  ASSERT_EQ(4, res->length);
+  ASSERT_EQ('a', res->bytes[3]);
+  ASSERT_EQ('b', res->bytes[2]);
+  ASSERT_EQ('c', res->bytes[1]);
+  ASSERT_EQ('d', res->bytes[0]);
 }
