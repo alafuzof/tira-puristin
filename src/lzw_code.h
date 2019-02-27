@@ -13,9 +13,11 @@ public:
   void encode(std::istream &input, std::ostream &output, unsigned int n_bits);
   int decode(std::istream &input, std::ostream &output);
 
+  int read_header(std::istream &input);
+
 private:
   void write_header(BitWriter &bw);
-  bool read_header(BitReader &br);
+
 
   unsigned int n_bits;
   unsigned int raw_length;

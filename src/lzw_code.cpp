@@ -104,19 +104,17 @@ void LZWCode::encode(std::istream &input, std::ostream &output, unsigned int n_b
   bw.write_uint(prefix, n_bits);
   encoded_length++;
   bw.flush();
-  output.seekp(18, std::ios_base::beg); // Seek to encoded count in file
+  output.seekp(18, output.beg); // Seek to encoded count in file
   bw.write_int((int)encoded_length);
 }
 
 int LZWCode::decode(std::istream &input, std::ostream &output) {
-  // Initialize input reader
-  BitReader br(input);
-
   // Read header
-  if(!read_header(br)) {
-    std::cerr << "Aborting decode!" << std::endl;
+  if(read_header(input) != 0) {
+    std::cerr << "Failed to parse LZW file header!" << std::endl;
     return -1;
   }
+  input.seekg(-1, input.cur);
 
   // Initialize dictionary
   if(dictionary != nullptr)
@@ -124,6 +122,7 @@ int LZWCode::decode(std::istream &input, std::ostream &output) {
   dictionary = new LZWDictionary(n_bits);
 
   // Read encoded symbols
+  BitReader br(input);
   size_t start = output.tellp();
   int index = br.read_uint(n_bits);
   unsigned int read_symbols = 1;
@@ -197,23 +196,25 @@ void LZWCode::write_header(BitWriter &bw) {
   bw.write_byte((unsigned char)n_bits);
 }
 
-bool LZWCode::read_header(BitReader &br) {
+int LZWCode::read_header(std::istream &input) {
+  BitReader br(input);
+
   std::string s = br.read_string();
   if(!s.compare("TIRA_PURISTIN")) {
     std::cerr << "Incorrect file identifier: " << s << " (should be TIRA_PURISTIN)" << std::endl;
-    return false;
+    return -1;
   }
   raw_length = (unsigned int)br.read_int();
   encoded_length = (unsigned int)br.read_int();
   s = br.read_string();
   if(!s.compare("LZW")) {
     std::cerr << "Incorrect format string: " << s << " (should be LZW)" << std::endl;
-    return false;
+    return -1;
   }
   n_bits = (unsigned int)br.read_byte();
   if(n_bits < 9 || n_bits > 20) {
     std::cerr << "Unsupported LZW dictionary size: " << n_bits << " bits" << std::endl;
-    return false;
+    return -1;
   }
-  return true;
+  return 0;
 }
