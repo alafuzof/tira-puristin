@@ -24,11 +24,13 @@ if(BUILD_PERF)
   target_link_libraries(puristin_perf gtest gmock_main)
   target_link_libraries(puristin_perf puristinlib)
 
-  message("Downloading and extracting test data (Silesia corpus)")
-  file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
-  file(DOWNLOAD http://sun.aei.polsl.pl/~sdeor/corpus/silesia.zip ${PROJECT_BINARY_DIR}/test_data/silesia.zip SHOW_PROGRESS)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz silesia.zip
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
+  if(NOT EXISTS "${PROJECT_BINARY_DIR}/test_data/silesia.zip")
+    message("Downloading and extracting test data (Silesia corpus)")
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
+    file(DOWNLOAD http://sun.aei.polsl.pl/~sdeor/corpus/silesia.zip ${PROJECT_BINARY_DIR}/test_data/silesia.zip SHOW_PROGRESS)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz silesia.zip
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/test_data)
+  endif()
 
 endif()
 
