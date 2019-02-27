@@ -8,8 +8,8 @@ int HuffmanCode::build_code(std::istream &input) {
   // Calculate symbol frequencies
   FileAnalyzer fa;
   fa.analyze(input);
-  m_length = fa.length();
-  if(m_length == 0)
+  raw_length = fa.length();
+  if(raw_length == 0)
     return -1;
   unsigned int *freq = fa.frequencies();
 
@@ -25,27 +25,23 @@ int HuffmanCode::build_code(std::istream &input) {
 
 int HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose) {
   if(verbose) {std::cout << "Building Huffman code for input" << std::endl;}
-  if(build_code(input) != 0)
+  if(build_code(input) != 0) {
+    std::cerr << "Failed to build Huffman code for input data!" << std::endl;
     return -1;
-  if(verbose) {std::cout << "Constructed codebook:" << std::endl; print_codebook(codebook);}
-
-  BitWriter bw(output);
+  }
 
   // Write file header
   if(verbose) {std::cout << "Writing file header" << std::endl;}
-  bw.write_string("TIRA_PURISTIN");
-  bw.write_int((int)m_length);
-  bw.write_string("HUFFMAN");
-
-  // Write Huffman tree
-  if(verbose) {std::cout << "Writing Huffman tree" << std::endl;}
-  tree->write(bw);
-  bw.flush();
+  if(write_header(output) != 0) {
+    std::cerr << "Failed to write header!" << std::endl;
+    return -1;
+  }
 
   // Write symbols
+  BitWriter bw(output);
   char c = '\0';
-  if(verbose) {std::cout << "Starting to encode and write " << m_length << " symbols" << std::endl;}
-  for(unsigned int i=0; i<m_length; i++) {
+  if(verbose) {std::cout << "Starting to encode and write " << raw_length << " symbols" << std::endl;}
+  for(unsigned int i=0; i<raw_length; i++) {
     input.get(c);
     bw.write_bitstring(codebook[(unsigned char)c]);
     //std::cout << "Writing character " << c << " bitstring " << codebook[(unsigned char)c] << std::endl;
@@ -57,44 +53,30 @@ int HuffmanCode::encode(std::istream &input, std::ostream &output, bool verbose)
 }
 
 int HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose) {
-  BitReader br(input);
-
   // Read file signature
-  if(verbose) {std::cout << "Reading file signature" << std::endl;}
-  std::string s = br.read_string();
-  if(!s.compare("TIRA_PURISTIN")) {
-    std::cerr << "The given input is not a puristin compressed file:" << std::endl;
-    std::cerr << "Initial string: " << s << " (should be TIRA_PURISTIN)" << std::endl;
-    return -1;
-  }
-  m_length = (unsigned int)br.read_int();
-  s = br.read_string();
-  if(!s.compare("HUFFMAN")) {
-    std::cerr << "The given input is not Huffman compressed:" << std::endl;
-    std::cerr << "Format string: " << s << " (should be HUFFMAN)" << std::endl;
-    return -1;
+  if(verbose) {std::cout << "Reading file header" << std::endl;}
+  if(read_header(input) == -1) {
+      std::cerr << "Header reading failed!" << std::endl;
+      return -1;
   }
 
-  // Read Huffman tree and reconstruct codebook
-  if(verbose) {std::cout << "Reading Huffman tree" << std::endl;}
-  tree = new BinaryTree<unsigned char>();
-  tree->read(br);
-  br.flush();
+  // Reconstruct codebook
   codebook = build_codebook(*tree);
   if(verbose) {std::cout << "Reconstructed codebook:" << std::endl; print_codebook(codebook);}
 
   // Read symbols
+  BitReader br(input);
   BinaryTree<unsigned char> *node = tree;
-  if(verbose) {std::cout << "Starting to decode and write " << m_length << " symbols" << std::endl;}
+  if(verbose) {std::cout << "Starting to decode and write " << raw_length << " symbols" << std::endl;}
   unsigned int read_count = 0;
-  while(read_count < m_length) {
+  while(read_count < raw_length) {
     bool bit = br.read_bit();
     // Move to left or right child depending on bit
     node = bit ? node->right_child : node->left_child;
 
     //  If we've arrived at a null child, something has gone wrong!
     if(node == nullptr) {
-      std::cerr << "Encountered impossible bit during read" << std::endl;
+      std::cerr << "Encountered impossible bit during read!" << std::endl;
       return -1;
     }
 
@@ -106,6 +88,56 @@ int HuffmanCode::decode(std::istream &input, std::ostream &output, bool verbose)
     }
   }
   if(verbose) {std::cout << "Done!" << std::endl;}
+
+  return 0;
+}
+
+int HuffmanCode::read_header(std::istream &input) {
+  BitReader br(input);
+
+  // Read file format string
+  std::string s = br.read_string();
+  if(!s.compare("TIRA_PURISTIN HUFFMAN")) {
+    std::cerr << "Incorrect format string: " << s << "! "
+              << "(should be \"TIRA_PURISTIN HUFFMAN\")" << std::endl;
+    return -1;
+  }
+
+  // Read raw (and encoded) length of message
+  raw_length = (unsigned int)br.read_int();
+  if((unsigned int)br.read_int() != raw_length) {
+    std::cerr << "The number of encoded symbols should be equal to the number "
+              << "of raw symbols in Huffman coded files!" << std::endl;
+    return -1;
+  }
+
+  // Read Huffman tree and reconstruct codebook
+  tree = new BinaryTree<unsigned char>();
+  tree->read(br);
+  br.flush();
+
+  // Seek one character backwards
+  input.seekg(-1, input.cur);
+
+  return 0;
+}
+
+int HuffmanCode::write_header(std::ostream &output) {
+  BitWriter bw(output);
+
+  // Write file format string and raw (and encoded) length
+  bw.write_string("TIRA_PURISTIN HUFFMAN");
+  bw.write_int((int)raw_length);
+  bw.write_int((int)raw_length); // Encoded == raw
+
+  // Write Huffman tree
+  if(tree != nullptr) {
+    tree->write(bw);
+    bw.flush();
+  } else {
+    std::cerr << "Huffman tree missing!" << std::endl;
+    return -1;
+  }
 
   return 0;
 }
