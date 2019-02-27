@@ -4,7 +4,7 @@
 #include <string>
 #include "binary_tree.h"
 
-/// This class encodes/decodes arbitrary data using Huffman codes
+/// This class encodes/decodes arbitrary data using Huffman coding
 class HuffmanCode {
 public:
   /// Generates the Huffman tree and codebook based on input
