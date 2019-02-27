@@ -2,6 +2,7 @@
 #include <fstream>
 #include "file_analyzer.h"
 #include "huffman_code.h"
+#include "lzw_code.h"
 #include "priority_queue.h"
 #include "cli.h"
 
@@ -12,9 +13,21 @@ int CLI::run() {
   if(argc >= 2) {
     Operation op = parse_operation();
     switch(op) {
-      case ANALYZE: return analyze();
-      case COMPRESS: return compress();
-      case DECOMPRESS: return decompress();
+      case ANALYZE: if(analyze() == -1) {
+                      print_help();
+                      return -1;
+                    } else
+                      return 0;
+      case COMPRESS: if(compress() == -1) {
+                       print_help();
+                       return -1;
+                     } else
+                       return 0;
+      case DECOMPRESS: if(decompress() == -1) {
+                         print_help();
+                         return -1;
+                       } else
+                         return 0;
       default: return print_help();
     }
   } else
@@ -98,19 +111,18 @@ int CLI::analyze(std::ostream &output) {
 
 int CLI::compress(std::ostream &output) {
   if(argc < 3) {
-    output << "Please specify input and output files for compression!" << std::endl;
-    return -1;
-  }
-  if(argc < 4) {
-    output << "Please specify an output file for compression!" << std::endl;
+    output << "Please specify compression type: huffman or lzw!" << std::endl;
     return -1;
   }
 
-  std::ifstream input_file(argv[2], std::ifstream::binary);
-  std::ofstream output_file(argv[3], std::ofstream::binary);
-  HuffmanCode hc;
-  hc.encode(input_file, output_file, true);
-  return 0;
+  std::string compression = argv[2];
+  if(compression == "huffman" || compression == "h")
+    return compress_huffman();
+  if(compression == "lzw")
+    return compress_lzw();
+
+  output << "Unknown compression type: " << compression << std::endl;
+  return -1;
 }
 
 int CLI::decompress(std::ostream &output) {
@@ -124,14 +136,117 @@ int CLI::decompress(std::ostream &output) {
   }
 
   std::ifstream input_file(argv[2], std::ifstream::binary);
+  if(!input_file.good()) {
+    output << "Could not open input file " << argv[3] << " for reading!" << std::endl;
+    return -1;
+  }
   std::ofstream output_file(argv[3], std::ofstream::binary);
+  if(!output_file.good()) {
+    output << "Could not open output file " << argv[4] << " for reading!" << std::endl;
+    return -1;
+  }
+
   HuffmanCode hc;
-  hc.decode(input_file, output_file, true);
+  LZWCode lzw;
+  if(hc.read_header(input_file) == 0) {
+    input_file.seekg(0, input_file.beg);
+    hc.decode(input_file, output_file, true);
+    return 0;
+  }
+
+  input_file.seekg(0, input_file.beg); 
+  if(lzw.read_header(input_file) == 0) {
+    input_file.seekg(0, input_file.beg);
+    lzw.decode(input_file, output_file);
+    return 0;
+  } else {
+    output << "Input file does not seem to be packed by puristin!" << std::endl;
+    return -1;
+  }
+}
+
+int CLI::compress_huffman(std::ostream &output) {
+  if(argc < 4) {
+    output << "Please specify an input file for compression!" << std::endl;
+    return -1;
+  }
+  if(argc < 5) {
+    output << "Please specify an output file for compression!" << std::endl;
+    return -1;
+  }
+
+  std::ifstream input_file(argv[3], std::ifstream::binary);
+  if(!input_file.good()) {
+    output << "Could not open input file " << argv[3] << " for reading!" << std::endl;
+    return -1;
+  }
+  std::ofstream output_file(argv[4], std::ofstream::binary);
+  if(!output_file.good()) {
+    output << "Could not open output file " << argv[4] << " for reading!" << std::endl;
+    return -1;
+  }
+  HuffmanCode hc;
+  return hc.encode(input_file, output_file, true);
+}
+
+int CLI::compress_lzw(std::ostream &output) {
+  if(argc < 4) {
+    output << "Please specify a bitrate (9-20 bits/symbol) for compression!" << std::endl;
+    return -1;
+  }
+  if(argc < 5) {
+    output << "Please specify an input file for compression!" << std::endl;
+    return -1;
+  }
+  if(argc < 6) {
+    output << "Please specify an output file for compression!" << std::endl;
+    return -1;
+  }
+
+  int n_bits = 0;
+  try {
+    n_bits = std::stoi(argv[3]);
+    if(n_bits < 9 || n_bits > 20)
+      throw;
+  } catch(...) {
+    output <<  "Could not parse " << argv[3] << " as bitrate between 9 and 20 bits!" << std::endl;
+    return -1;
+  }
+
+  std::ifstream input_file(argv[4], std::ifstream::binary);
+  if(!input_file.good()) {
+    output << "Could not open input file " << argv[4] << " for reading!" << std::endl;
+    return -1;
+  }
+  std::ofstream output_file(argv[5], std::ofstream::binary);
+  if(!output_file.good()) {
+    output << "Could not open output file " << argv[5] << " for reading!" << std::endl;
+    return -1;
+  }
+
+  LZWCode lzw;
+  lzw.encode(input_file, output_file, n_bits);
   return 0;
 }
 
 int CLI::print_help(std::ostream &output) {
   output << "Usage\n" << std::endl;
-  output << '\t' << "puristin [operation] <path-to-file> (path-to-save)" << std::endl;
+  output << "    puristin [operation] (options) <path-to-file> <path-to-save>" << std::endl;
+
+  output << "\nExamples:\n" << std::endl;
+
+  output << "  Analyze file:" << std::endl;
+  output << "    puristin analyze file" << std::endl;
+  output << "    puristin a file\n" << std::endl;
+
+  output << "  Compress file:" << std::endl;
+  output << "    puristin compress huffman file file.compressed" << std::endl;
+  output << "    puristin c huffman file file.compressed" << std::endl;
+  output << "    puristin compress lzw 10 file file.compressed" << std::endl;
+  output << "    puristin c lzw 16 file file.compressed\n" << std::endl;
+
+  output << "  Decompress file:" << std::endl;
+  output << "    puristin decompress file.compressed file" << std::endl;
+  output << "    puristin d file.compressed file" << std::endl;
   return 0;
 }

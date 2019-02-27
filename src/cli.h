@@ -14,6 +14,8 @@ public:
 
   int analyze(std::ostream &output=std::cout);
   int compress(std::ostream &output=std::cout);
+  int compress_huffman(std::ostream &output=std::cout);
+  int compress_lzw(std::ostream &output=std::cout);
   int decompress(std::ostream &output=std::cout);
   int print_help(std::ostream &output=std::cout);
 
