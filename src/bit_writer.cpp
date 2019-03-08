@@ -18,6 +18,7 @@ void BitWriter::write_bit(bool bit) {
 }
 
 void BitWriter::write_byte(unsigned char byte) {
+  // Bytes are written one bit at a time, this could probably be improved
   for(int i=0; i<8; i++) {
     write_bit(byte & (1<<(7-i)));
   }
@@ -45,12 +46,14 @@ void BitWriter::write_bitstring(std::string bstr) {
 
 void BitWriter::write_int(int i) {
   unsigned char *ip = (unsigned char *)&i;
+  // Integers are written one byte at a time, this could probably be improved
   for(int j=0; j<4; j++) {
     write_byte(ip[3-j]); // Little-endian
   }
 }
 
 void BitWriter::write_uint(unsigned int i, unsigned int n_bits) {
+  // Integers are written one bit at a time, this could probably be improved
   for(int j=n_bits-1; j>=0; j--) {
     write_bit((i>>j) & 1);
   }
