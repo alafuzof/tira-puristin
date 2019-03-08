@@ -28,13 +28,16 @@ int CLI::run() {
                          return -1;
                        } else
                          return 0;
-      default: return print_help();
+      default: print_help();
+               return -1;
     }
-  } else
-    return print_help();
+  }
+
+  print_help();
+  return -1;
 }
 
-Operation CLI::parse_operation() {
+CLI::Operation CLI::parse_operation() {
   std::string op = argv[1];
   if(op == "a" || op == "analyze")
     return ANALYZE;
@@ -54,7 +57,6 @@ int CLI::analyze(std::ostream &output) {
   std::ifstream input_file(argv[2], std::ifstream::binary);
   FileAnalyzer fa;
   fa.analyze(input_file);
-  //fa.print_report();
 
   // Build the Huffman code and get the codebook
   BinaryTree<unsigned char> *huffman_tree = build_tree(fa.frequencies());
@@ -154,7 +156,7 @@ int CLI::decompress(std::ostream &output) {
     return 0;
   }
 
-  input_file.seekg(0, input_file.beg); 
+  input_file.seekg(0, input_file.beg);
   if(lzw.read_header(input_file) == 0) {
     input_file.seekg(0, input_file.beg);
     lzw.decode(input_file, output_file);
@@ -229,7 +231,7 @@ int CLI::compress_lzw(std::ostream &output) {
   return 0;
 }
 
-int CLI::print_help(std::ostream &output) {
+void CLI::print_help(std::ostream &output) {
   output << "Usage\n" << std::endl;
   output << "    puristin [operation] (options) <path-to-file> <path-to-save>" << std::endl;
 
@@ -248,5 +250,4 @@ int CLI::print_help(std::ostream &output) {
   output << "  Decompress file:" << std::endl;
   output << "    puristin decompress file.compressed file" << std::endl;
   output << "    puristin d file.compressed file" << std::endl;
-  return 0;
 }

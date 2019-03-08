@@ -2,11 +2,8 @@
 #include <iomanip>
 #include <sstream>
 #include "file_analyzer.h"
-// #include "priority_queue.h"
-// #include "huffman_code.h"
 
-// Currently the code equates symbol with 8-bit char
-// TODO: wide char support?
+// The code equates symbol with 8-bit char
 #define NUM_SYMBOLS 256
 
 FileAnalyzer::FileAnalyzer() {
@@ -71,9 +68,4 @@ float *FileAnalyzer::probabilities() {
 
 unsigned int *FileAnalyzer::frequencies() {
   return symbol_count;
-  //unsigned int *freq = new unsigned int[NUM_SYMBOLS];
-  //for(int i=0; i<NUM_SYMBOLS; i++) {
-  //  freq[i] = symbol_count[i];
-  //}
-  //return freq;
 }
