@@ -7,6 +7,7 @@ struct ByteSequence {
 };
 
 /// \brief Optimized dictionary class for LZW coding.
+///
 /// Modelled on http://warp.povusers.org/EfficientLZW/index.html
 class LZWDictionary {
 public:

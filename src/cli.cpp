@@ -188,7 +188,18 @@ int CLI::compress_huffman(std::ostream &output) {
     return -1;
   }
   HuffmanCode hc;
-  return hc.encode(input_file, output_file, true);
+  int status = hc.encode(input_file, output_file, false);
+  if(status == 0) {
+    output << "Encoded " << hc.get_unencoded_symbol_count() << " symbols to "
+           << hc.get_encoded_symbol_count() << " symbols" << std::endl;
+    output << "Compressed " << hc.get_unencoded_length() << " bytes to "
+           << hc.get_encoded_length() << " bytes" << std::endl;
+    output << "Compression ratio: " << hc.get_compression_ratio() << std::endl;
+    output << "Elapsed time: " << hc.get_total_time() << " s ("
+           << hc.get_time_per_symbol()*1000*1000*1000 << " ns per symbol)" << std::endl;
+  }
+
+  return status;
 }
 
 int CLI::compress_lzw(std::ostream &output) {

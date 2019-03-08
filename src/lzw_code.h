@@ -5,32 +5,37 @@
 #include "bit_writer.h"
 #include "lzw_dictionary.h"
 
-/// This class encodes/decodes arbitrary data using LZW coding
+/// \brief This class encodes/decodes arbitrary data using LZW coding
 class LZWCode {
 public:
-  /// Default constructor.
+  /// \brief Default constructor.
   LZWCode();
-  /// Destructor. Frees any memory reserved by the object.
+  /// \brief Destructor. Frees any memory reserved by the object.
   ~LZWCode();
 
-  /// Encodes input to output using LZW encoding
+  /// \brief Encodes input to output using LZW encoding
   /// \param input Input stream
   /// \param output Output stream
-  /// \parma n_bits Encoding bitrate
+  /// \param n_bits Encoding bitrate
   void encode(std::istream &input, std::ostream &output, unsigned int n_bits);
-  /// Decodes LZW coded data in input to output
+  /// \brief Decodes LZW coded data in input to output
   /// \param input Input stream
   /// \param output Output stream
+  /// \param verbose Enable verbose printing (default off)
+  /// \param cout Output stream for verbose messages (default std::cout)
+  /// \param cerr Output stream for error messages (default  std::cerr)
   /// \return 0 for success, -1 for failure
-  int decode(std::istream &input, std::ostream &output);
+  int decode(std::istream &input, std::ostream &output, bool verbose=false,
+             std::ostream &cout=std::cout, std::ostream &cerr=std::cerr);
 
-  /// Attempts to read the Huffman coding file header from input
+  /// \brief Attempts to read the Huffman coding file header from input
   /// \param input Input stream
+  /// \param cerr Output stream for error messages (default std::cerr)
   /// \return 0 for success, -1 for failure
-  int read_header(std::istream &input);
+  int read_header(std::istream &input, std::ostream &cerr=std::cerr);
 
 private:
-  /// Attempts to write the Huffman coding file header to output
+  /// \brief Attempts to write the Huffman coding file header to output
   /// \param output Output stream
   void write_header(BitWriter &bw);
 

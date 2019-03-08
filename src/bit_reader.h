@@ -3,6 +3,7 @@
 #include <iostream>
 
 /// \brief Simple I/O for reading single bits and unaligned bytes.
+///
 /// All reads start at the current bit position of the BitReader and advance the
 /// position by the number of bits read.
 class BitReader {

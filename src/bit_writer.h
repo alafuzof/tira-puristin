@@ -3,6 +3,7 @@
 #include <iostream>
 
 /// \brief Simple I/O for writing single bits and unaligned bytes.
+///
 /// All writes start at the current bit position of the BitWriter and advance
 /// the position by the number of bits written.
 class BitWriter {
