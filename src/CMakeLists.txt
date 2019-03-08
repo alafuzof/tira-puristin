@@ -1,4 +1,5 @@
 set(LIB_SRC
+  abstract_code.cpp
   bit_reader.cpp
   bit_writer.cpp
   cli.cpp
