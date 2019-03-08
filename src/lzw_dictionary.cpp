@@ -2,11 +2,12 @@
 #include <string>
 #include "lzw_dictionary.h"
 
-struct DictionaryEntry {
-  int prefix_index;
-  unsigned char byte;
-  int first_index;
-  int next_index;
+/// Helper struct for storing byte sequences in the dictionary
+struct LZWDictionary::DictionaryEntry {
+  int prefix_index;   ///< Index for the prefix of this sequence ("parent")
+  unsigned char byte; ///< Final byte of the sequence
+  int first_index;    ///< Index of the first sequence having this sequence as its prefix ("child")
+  int next_index;     ///< Index of the next sequence sharing the same prefix as this one ("sibling")
 };
 
 LZWDictionary::LZWDictionary(unsigned int n_bits) {
@@ -14,7 +15,9 @@ LZWDictionary::LZWDictionary(unsigned int n_bits) {
     throw std::domain_error("Number of bits must be between 9 and 20");
   }
   this->n_bits = n_bits;
-  entries = new DictionaryEntry[1 << n_bits];
+  entries = new LZWDictionary::DictionaryEntry[1 << n_bits];
+
+  // A large shared ByteSequence is allocated to reduce allocations during queries
   prev_seq = new ByteSequence;
   prev_seq->length = 0;
   prev_seq->bytes = new unsigned char[1 << n_bits];
@@ -32,13 +35,13 @@ int LZWDictionary::query(int prefix, unsigned char byte) {
   if(prefix == -1) {
     return (int)byte;
   }
-  // Search through the prefix first list
-  int idx = entries[prefix].first_index;
+  // Search through the "children" of this prefix
+  int idx = entries[prefix].first_index; // First child
   while(idx != -1) {
     if(entries[idx].byte == byte) {
       return idx;
     }
-    idx = entries[idx].next_index;
+    idx = entries[idx].next_index; // Next sibling
   }
   return -1;
 }
@@ -47,13 +50,17 @@ ByteSequence *LZWDictionary::query(int index) {
   prev_seq->length = 0;
   int idx = index;
   int i = 0;
+  // Start with the current index and reconstruct the sequence using the prefix
+  // indices as "parent" links
   while(idx != -1) {
+    // Note we place the bytes into the sequence in reverse order!
     prev_seq->bytes[i] = entries[idx].byte;
     prev_seq->length++;
     idx = entries[idx].prefix_index;
     i++;
   }
 
+  // Note: we return the shared ByteSequence. The caller should not free this!
   return prev_seq;
 }
 
@@ -99,6 +106,8 @@ int LZWDictionary::insert(int prefix, unsigned char byte) {
 
 
 int LZWDictionary::reset() {
+  // During reset we re-insert the first 256 entries (all possible single byte
+  // values)
   for(int i=0; i<256; i++) {
     entries[i].prefix_index = -1;
     entries[i].byte = (unsigned char)i;
