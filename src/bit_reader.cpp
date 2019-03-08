@@ -32,6 +32,7 @@ unsigned char BitReader::read_byte() {
 
 std::string BitReader::read_string() {
   std::ostringstream oss;
+  // Read bytes until a null-value is encountered
   while(true) {
     unsigned char byte = read_byte();
     oss << byte;
@@ -60,9 +61,7 @@ unsigned int BitReader::read_uint(unsigned int n_bits) {
 }
 
 void BitReader::flush() {
-  //std::cout << "Buffer was " << std::hex << (int)buffer;
   input_stream->get((char&)buffer);
-  //std::cout << " now " << std::hex << (int)buffer << std::endl;
   buffer_position = 0;
 }
 

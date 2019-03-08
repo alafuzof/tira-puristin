@@ -2,24 +2,32 @@
 
 #include <iostream>
 
-/// Simple I/O for reading single bits and unaligned bytes
+/// \brief Simple I/O for reading single bits and unaligned bytes.
+/// All reads start at the current bit position of the BitReader and advance the
+/// position by the number of bits read.
 class BitReader {
 public:
   /// \brief Constructor. Initializes object for reading from an input stream.
   /// \param input Input stream for reading
   BitReader(std::istream &input);
 
-  /// \brief Read a bit from the current bit position in the input stream.
+  /// \brief Read a bit
   /// \return Boolean indicating the bit value
   bool read_bit();
-  /// \brief Read a byte starting from the current bit position in the input stream.
-  /// \return Byte as read from the input stream
+  /// \brief Read a byte
+  /// \return Byte value as read from the input stream
   unsigned char read_byte();
-
+  /// \brief Read a null-terminated character string
+  /// \return String read from the input stream
   std::string read_string();
+  /// \brief Read a (signed 4-byte) integer
+  /// \return Integer value read from the input stream
   int read_int();
+  /// \brief Read an unsigned variable length integer
+  /// \return Unsigned integer value read from the input stream
   unsigned int read_uint(unsigned int n_bits);
-
+  /// \brief Flush the reader.
+  /// Advances the BitReader position to the next byte boundary.
   void flush();
 
   /// \brief Convenience "stream operator" for reading bits

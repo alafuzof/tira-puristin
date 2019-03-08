@@ -38,14 +38,6 @@ public:
     right_child = right;
   };
 
-  /// \brief Destructor. Frees memory related to tree and all its children.
-  //~BinaryTree() {
-  //  if(left_child != nullptr)
-  //    delete left_child;
-  //  if(right_child != nullptr)
-  //    delete right_child;
-  //};
-
   /// \brief Checks whether this node is a leaf
   /// \return Boolean indicating this tree has no children
   bool leaf() {
@@ -70,29 +62,35 @@ public:
     }
   };
 
+  /// \brief Recursively writes a compact binary representation for the tree
+  /// \param writer BitWriter object used to output the binary representation
   void write(BitWriter &writer) {
+    // Write the value of the current root node
     int n_bytes = sizeof(value);
     unsigned char *value_bytes = (unsigned char *)(&value);
     for(int i=0; i<n_bytes; i++) {
       writer.write_byte(value_bytes[i]);
     }
 
+    // If there is no left child, write a '0'-bit
     if(left_child == nullptr) {
       writer.write_bit(false);
-    } else {
+    } else { // Otherwise write '1'-bit and then recursively the entire left subtree
       writer.write_bit(true);
       left_child->write(writer);
     }
 
+    // If there is no right child, write a '0'-bit
     if(right_child == nullptr) {
       writer.write_bit(false);
-    } else {
+    } else { // Otherwise write '1'-bit and then recursively the entire right subtree
       writer.write_bit(true);
       right_child->write(writer);
     }
   };
 
   void read(BitReader &reader) {
+    // Read the value of the current node
     int n_bytes = sizeof(value);
     unsigned char *bytes = new unsigned char[n_bytes];
     for(int i=0; i<n_bytes; i++) {
@@ -101,22 +99,28 @@ public:
     value = *(T*)(bytes);
     delete[] bytes;
 
+    // If we see a '1' bit, there is a left child, so we read it recursively
     if(reader.read_bit()) {
       left_child = new BinaryTree<T>();
       left_child->read(reader);
-    } else {
+    } else { // Otherwise, no left child
       left_child = nullptr;
     }
 
+    // If we see a '1' bit, there is a right child, so we read it recursively
     if(reader.read_bit()) {
       right_child = new BinaryTree<T>();
       right_child->read(reader);
-    } else {
+    } else { // Otherwise, no left child
       right_child = nullptr;
     }
   };
 };
 
+/// \brief Check whether two trees are equal (structure and values)
+/// \param a Tree A
+/// \param b Tree B
+/// \return True if A == B, false if A != B
 template <class T>
 bool tree_equality(BinaryTree<T> &a, BinaryTree<T> &b) {
   bool flag = true;
