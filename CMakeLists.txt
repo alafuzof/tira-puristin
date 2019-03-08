@@ -15,8 +15,8 @@ SET(GCC_COVERAGE_LINK_FLAGS "-lgcov --coverage")
 SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 # Version number
-set(VERSION_MAJOR 0 CACHE STRING "Project major version number.")
-set(VERSION_MINOR 6 CACHE STRING "Project minor version number.")
+set(VERSION_MAJOR 1 CACHE STRING "Project major version number.")
+set(VERSION_MINOR 0 CACHE STRING "Project minor version number.")
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in
