@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classAbstractCode.html" title="This class provides a common interface to different code classes. " alt="" coords="5,5,108,32"/>
+<area shape="rect" id="node2" href="$classHuffmanCode.html" title="This class encodes/decodes arbitrary data using Huffman coding. " alt="" coords="156,5,259,32"/>
+</map>
