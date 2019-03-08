@@ -152,8 +152,17 @@ int CLI::decompress(std::ostream &output) {
   LZWCode lzw;
   if(hc.read_header(input_file) == 0) {
     input_file.seekg(0, input_file.beg);
-    hc.decode(input_file, output_file, true);
-    return 0;
+    int status = hc.decode(input_file, output_file);
+    if(status == 0) {
+      output << "Decoded " << hc.get_unencoded_symbol_count() << " symbols to "
+             << hc.get_encoded_symbol_count() << " symbols" << std::endl;
+      output << "Decompressed " << hc.get_unencoded_length() << " bytes to "
+             << hc.get_encoded_length() << " bytes" << std::endl;
+      output << "Compression ratio: " << hc.get_compression_ratio() << std::endl;
+      output << "Elapsed time: " << hc.get_total_time() << " s ("
+             << hc.get_time_per_symbol()*1000*1000*1000 << " ns per symbol)" << std::endl;
+    }
+    return status;
   }
 
   input_file.seekg(0, input_file.beg);

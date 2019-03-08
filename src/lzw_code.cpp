@@ -36,6 +36,10 @@ LZWCode::~LZWCode() {
 }
 
 void LZWCode::encode(std::istream &input, std::ostream &output, unsigned int n_bits) {
+  // Measuring performance (start)
+  clock_t t1 = clock();
+  std::streampos output_start = output.tellp();
+
   // Get file length from analyzer
   FileAnalyzer fa;
   fa.analyze(input);
@@ -106,6 +110,13 @@ void LZWCode::encode(std::istream &input, std::ostream &output, unsigned int n_b
   bw.flush();
   output.seekp(18, output.beg); // Seek to encoded count in file
   bw.write_int((int)encoded_length);
+
+  // Measure performance (stop)
+  clock_t t2 = clock();
+  float total_time = (((float)(t2-t1))/CLOCKS_PER_SEC);
+
+  std::cout << "Elapsed time " << total_time << " s ("
+            << (total_time/raw_length)*1000*1000 << " ns per symbol)" << std::endl;
 }
 
 int LZWCode::decode(std::istream &input, std::ostream &output, bool verbose,

@@ -137,8 +137,8 @@ int HuffmanCode::read_header(std::istream &input, std::ostream &cerr) {
   unencoded_symbol_count = (unsigned int)br.read_int();
   encoded_symbol_count = (unsigned int)br.read_int();
   if(unencoded_symbol_count != encoded_symbol_count) {
-    cerr << "The number of encoded symbols should be equal to the number "
-         << "of unencoded symbols in Huffman coded files!" << std::endl;
+    cerr << "The number of encoded symbols " << encoded_symbol_count << " should be equal to the number "
+         << "of unencoded symbols " << unencoded_symbol_count << " in Huffman coded files!" << std::endl;
     return -1;
   }
 
