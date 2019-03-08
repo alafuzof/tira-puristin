@@ -1,12 +1,11 @@
 # Mitä on testattu
 
 Koodin toiminnallisuutta on testattu yksikkötesteillä, jotka voi itse ajaa
-
+`puristin_perf` komennolla. Lisäksi koodin pakkaustehoa sekä -suorituskykyä
+on testattu nk. Silesia-korpuksella, joka koostuu joukosta erilaisia
+tietotyyppejä.
 
 # Suorituskykytestaus
-
-
-
 
 Huffman koodauksen pakkaussuhde vaihtelee pakattavan datan mukaan:
 
